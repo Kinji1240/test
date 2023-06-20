@@ -8,6 +8,8 @@ from kivy.uix.button import Button
 
 class TestApp(App):
 
+    #test
+
     def animate(self, instance):
         # create an animation object. This object could be stored
         # and reused each call or reused across different widgets.
