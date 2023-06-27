@@ -11,23 +11,16 @@ class RootLayout(GridLayout):
         #カラム数
         self.cols = 2
 
-        layout = BoxLayout(orientation='vertical')
-        button1 = Button(text='1', font_size=150)
-        button2 = Button(text='Button2')
+    box_layout = BoxLayout()
 
-        layout.add_widget(button1)
-        layout.add_widget(button2)
+    button1 = Button(text='Button 1')
+    box_layout.add_widget(button1)
 
-        layout.add_widget(button1)
-        layout.add_widget(button1)
+    button2 = Button(text='Button 2')
+    box_layout.add_widget(button2)
+    layout = FloatLayout()
+    layout.add_widget(box_layout)
 
-        layout.add_widget(button1)
-        layout.add_widget(button1)
-
-class MainApp(App):
+class MyApp(App):
     def build(self):
-
-        return RootLayout()
-
-if __name__ == "__main__":
-    MainApp().run()
+        return layout
