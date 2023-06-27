@@ -10,25 +10,33 @@
         Image:
             id: my_image
             source: ""
-            size_hint: (1, 4)
+            size_hint: (1, 5)
 
         GridLayout:
             cols:3
             
             Button:
-                text: "Delicious TENDON!!"
+                text: "かわよき!!"
+                font_name: "IPAexGothic"
                 pos_hint: {"center_x": 0.5}
                 size_hint: (1, 1)
                 on_press: root.press1()
                 
             Button:
-                text: "Delicious HORUMON!!"
+                text: "よき!!"
                 pos_hint: {"center_x": 0.5}
                 size_hint: (1, 1)
                 on_press: root.press2()
             
             Button:
-                text: "Delicious CURRY!!"
+                text: "saikou!!"
                 pos_hint: {"center_x": 0.5}
                 size_hint: (1, 1)
                 on_press: root.press3()
+                
+            Button:
+                text: "iyasi!!"
+                on_release: root.manager.current = 'goto01.txt'
+                pos_hint: {"center_x": 0.5}
+                size_hint: (1, 1)
+                on_press: root.press4()

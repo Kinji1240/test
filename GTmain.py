@@ -13,13 +13,17 @@ Builder.load_file("images.kv")
 
 class MyLayout(Widget):
     def press1(self):
-        self.ids.my_image.source = "photo1.jpg"
+        self.ids.my_image.source = "image/f3978ebc-9030-49e7-aa5e-4a370a955e1b.jpg"
 
     def press2(self):
-        self.ids.my_image.source = "photo2.jpg"
+        self.ids.my_image.source = "image/fc3daa7234c7326abcef144075ce62649d3b1113.jpg"
 
     def press3(self):
-        self.ids.my_image.source = "photo3.jpg"
+        self.ids.my_image.source = "image/0cd456a4-71c5-46f3-9bea-4ccf155c7a89.jpg"
+
+    def press4(self):
+        self.ids.manager.current = "goto01.txt"
+
 
 class DispimageApp(App):
     def build(self):
