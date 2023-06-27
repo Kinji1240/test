@@ -1,33 +1,30 @@
 from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
+from kivy.config import Config
+from kivy.uix.widget import Widget
+from kivy.lang import Builder
 
-class RootLayout(GridLayout):
+#ウインドウの幅と高さの設定
+Config.set('graphics', 'width', 600)
+Config.set('graphics', 'height', 500)
+#1でサイズ変更可、0はサイズ変更不可
+Config.set('graphics', 'resizable', 1)
+#kvファイルの読み込み
+Builder.load_file("images.kv")
 
-    def __init__(self, **kwargs):
-        super(RootLayout, self).__init__(**kwargs)
-        #カラム数
-        self.cols = 2
+class MyLayout(Widget):
+    def press1(self):
+        self.ids.my_image.source = "photo1.jpg"
 
-        layout = BoxLayout(orientation='vertical')
-        button1 = Button(text='1', font_size=150)
-        button2 = Button(text='Button2')
+    def press2(self):
+        self.ids.my_image.source = "photo2.jpg"
 
-        layout.add_widget(button1)
-        layout.add_widget(button2)
+    def press3(self):
+        self.ids.my_image.source = "photo3.jpg"
 
-        layout.add_widget(button1)
-        layout.add_widget(button1)
-
-        layout.add_widget(button1)
-        layout.add_widget(button1)
-
-class MainApp(App):
+class DispimageApp(App):
     def build(self):
+        self.title = "window"
+        return MyLayout()
 
-        return RootLayout()
-
-if __name__ == "__main__":
-    MainApp().run()
+if __name__ == '__main__':
+    DispimageApp().run()
