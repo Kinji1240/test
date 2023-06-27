@@ -8,11 +8,7 @@ from kivy.uix.button import Button
 
 class TestApp(App):
 
-<<<<<<< HEAD
-    #testtesttt
-=======
-    #testGT
->>>>>>> 861eb7cbf6b81000701c8a82f509a7899ea9a57b
+    #test5
 
     def animate(self, instance):
         # create an animation object. This object could be stored
