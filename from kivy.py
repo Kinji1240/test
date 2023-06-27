@@ -20,19 +20,9 @@ class PrefectureDropDownApp(App):
                        '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県',
                        '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県']
 
-        for prefectures in prefectures:
-            btn = Button(text=prefectures, size_hint_y=None, height=44)
-            btn.bind(on_release=lambda btn: self.select_prefecture(btn.text, dropdown_button))
-            dropdown.add_widget(btn)
+        button.bind(on_release=dropdown.open)
 
+        layout.add_widget(button)
         return layout
-
-    def show_dropdown(self, button):
-        dropdown = button.parent.children[0]
-        dropdown.open(button)
-
-    def select_prefecture(self, text, button):
-        button.text = text
-
-if __name__ == '__main__':
+    
     PrefectureDropDownApp().run()
