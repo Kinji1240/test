@@ -12,7 +12,7 @@ LabelBase.register(DEFAULT_FONT, 'NikkyouSans-mLKax.ttf')  # 追加分
 # you can control the ScreenManager from kv. Each screen has by default a
 # property manager that gives you the instance of the ScreenManager used.
  
-
+Builder.load_file("sm01.kv")
 
 # Declare both screens
 class MenuScreen(Screen):
