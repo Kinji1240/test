@@ -6,7 +6,7 @@ from kivy.core.text import LabelBase, DEFAULT_FONT  # 追加分
 from kivy.resources import resource_add_path  # 追加分
 
 resource_add_path('font')  # 追加分
-LabelBase.register(DEFAULT_FONT, 'NikkyouSans-mLKax.ttf')  # 追加分
+LabelBase.register(DEFAULT_FONT, 'NikkyouSans-mLKax.ttf') 
  
 # Create both screens. Please note the root.manager.current: this is how
 # you can control the ScreenManager from kv. Each screen has by default a
