@@ -12,7 +12,7 @@ Config.set('graphics', 'resizable', 1)
 from kivy.core.text import LabelBase, DEFAULT_FONT  # 追加分
 from kivy.resources import resource_add_path  # 追加分
 
-resource_add_path('font\幻ノにじみ明朝.otf')  # 追加分
+resource_add_path('font')  # 追加分
 LabelBase.register(DEFAULT_FONT, 'msgothic.ttc')  # 追加分
 
 #kvファイルの読み込み
