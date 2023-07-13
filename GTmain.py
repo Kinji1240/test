@@ -3,7 +3,7 @@ from kivy.config import Config
 
 from kivy.uix.widget import Widget
 from kivy.lang import Builder
-
+import japanize_kivy
 
 #ウインドウの幅と高さの設定
 Config.set('graphics', 'width', 600)
@@ -14,8 +14,6 @@ Config.set('graphics', 'resizable', 1)
 from kivy.core.text import LabelBase, DEFAULT_FONT  # 追加分
 from kivy.resources import resource_add_path  # 追加分
 
-resource_add_path('C:/Windows/Fonts')  # 追加分
-LabelBase.register(DEFAULT_FONT, 'NikkyouSans-mLKax.ttf')  # 追加分
 
 #kvファイルの読み込み
 Builder.load_file("mylayout.kv")
