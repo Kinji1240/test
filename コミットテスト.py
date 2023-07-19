@@ -9,7 +9,7 @@ class WidgetScreen(BoxLayout):
         super(WidgetScreen, self).__init__(**kwargs)
         self.orientation = 'vertical'
         
-        # ラベル_OND_SECOND
+        # ラベル_OND_三
         label = Label(text='Hello, World!', font_size=24)
         self.add_widget(label)
         
