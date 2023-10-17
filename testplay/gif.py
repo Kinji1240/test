@@ -4,6 +4,7 @@ from kivy.graphics import Rectangle
 from kivy.core.window import Window
 from kivy.clock import Clock
 from PIL import Image as PILImage
+from kivy.core.image import Image as CoreImage
 
 class MyKivyApp(App):
     def build(self):
@@ -25,7 +26,12 @@ class MyKivyApp(App):
         return layout
 
     def _get_texture(self):
-        return self.gif_images.texture
+        # GifImageFileをKivyのテクスチャに変換
+        pil_image = self.gif_images
+        pil_image = pil_image.convert('RGBA')  # RGBA形式に変換
+        data = pil_image.tobytes()
+        texture = CoreImage(data, ext='png', mipmap=True).texture
+        return texture
 
     def animate_background(self, dt):
         try:
