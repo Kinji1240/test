@@ -14,6 +14,8 @@ Config.set('graphics', 'resizable', 1)
 from kivy.core.text import LabelBase, DEFAULT_FONT  # 追加分
 from kivy.resources import resource_add_path  # 追加分
 
+resource_add_path('C:/Windows/Fonts')  # 追加分
+LabelBase.register(DEFAULT_FONT, 'NikkyouSans-mLKax.ttf')  # 追加分
 
 #kvファイルの読み込み
 Builder.load_file("mylayout.kv")
@@ -27,9 +29,6 @@ class MyLayout(Widget):
 
     def press3(self):
         self.ids.my_image.source = "image/0cd456a4-71c5-46f3-9bea-4ccf155c7a89.jpg"
-
-    def press4(self):
-        self.ids.manager.current = "goto01.txt"
 
 
 class DispimageApp(App):

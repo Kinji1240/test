@@ -1,0 +1,37 @@
+#: import SlideTransition kivy.uix.screenmanager.SlideTransition
+ 
+<Widget>:
+ 
+<Display>:
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            size_hint: 1, None
+            height: '48dp'
+            Button:
+                text: '画面1を表示'
+                on_release:
+                    sm.transition = SlideTransition(direction='right')
+                    sm.current = 'screen_one'
+            Button:
+                text: '画面2を表示'
+                on_release:
+                    sm.transition = SlideTransition(direction='left')
+                    sm.current = 'screen_two'
+ 
+        ScreenManager:
+            id: sm
+            Screen_One:
+            Screen_Two:
+ 
+<Screen_One>:
+    name: 'screen_one'
+    Button:
+        background_color: 1,0,0,1
+        text: '画面1(のボタン)'
+ 
+<Screen_Two>:
+    name: 'screen_two'
+    Button:
+        background_color: 0,0,1,1
+        text: '画面2(のボタン)'
