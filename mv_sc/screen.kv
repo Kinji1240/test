@@ -1,0 +1,38 @@
+<MainScreen>:
+    BoxLayout:
+        Button:
+            text: 'Move to SubView'
+            on_press: root.manager.current = 'sub'
+        Button:
+            text: 'Close'
+
+<SubScreen>:
+    BoxLayout:
+        Button:
+            text: 'No View'
+        Button:
+            text: 'Move to MainView'
+            on_press: root.manager.current = 'main'
+            <MainMenuButton@Button, SubMenuButton@Button>:
+    font_size: 20
+    text_size: self.size
+    halign: "center"
+    valign: "center"
+
+<MainMenu>
+    name: "MainMenu"
+    orientation: 'vertical'
+    size: root.size[0], root.size[1]
+    MainMenuButton:
+        text: 'Main Upper'
+    MainMenuButton:
+        text: 'Main Under'
+
+<SubMenu>
+    name: "SubMenu"
+    orientation: 'vertical'
+    size: root.size[0], root.size[1]
+    SubMenuButton:
+        text: 'Sub Upper'
+    SubMenuButton:
+        text: 'Sub Under'
