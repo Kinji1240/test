@@ -25,9 +25,25 @@ class HomeScreen(Screen):
         time_button = Button(text="時間表示", on_release=self.go_to_second_screen)
         root_layout.add_widget(time_button)
 
-        # もう一つの時間表示ボタン
-        time_button2 = Button(text="時間表示 (2)", on_release=self.go_to_serd_screen)
-        root_layout.add_widget(time_button2)
+        # 天気の時間表示ボタン
+        weather_button = Button(text="天気表示", on_release=self.go_to_serd_screen)
+        root_layout.add_widget(weather_button)
+
+        # 予定の時間表示ボタン
+        schedule_button = Button(text="予定表示", on_release=self.go_to_serd_screen)
+        root_layout.add_widget(schedule_button)
+
+        # +の時間表示ボタン
+        plus_button = Button(text="+", on_release=self.go_to_serd_screen)
+        root_layout.add_widget(plus_button)
+
+        # 背景の時間表示ボタン
+        background_button = Button(text="背景", on_release=self.go_to_serd_screen)
+        root_layout.add_widget(background_button)
+
+        # 確定ボタン
+        confirm_button = Button(text="確定", on_release=self.go_to_serd_screen)
+        root_layout.add_widget(confirm_button)
 
         # レイアウトを画面に追加
         self.add_widget(root_layout)
@@ -62,7 +78,8 @@ class SerdScreen(Screen):
 
     def go_to_serd_screen(self, instance):
         app.screen_manager.current = "home"
-
+    
+        
     '''def go_to_second_screen(self, instance):
         app.screen_manager.current = "second"
 
