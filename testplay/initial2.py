@@ -80,32 +80,6 @@ class SerdScreen(Screen):
         app.screen_manager.current = "home"
     
         
-    '''def go_to_second_screen(self, instance):
-        app.screen_manager.current = "second"
-
-        # ボタンを作成し、レイアウトに追加
-        
-        weather_button = Button(text="天気表示")
-        schedule_button = Button(text="予定表示")
-        plus_button = Button(text="+")
-        background_button = Button(text="背景")
-        
-        # 確定ボタン
-        confirm_button = Button(text="確定", size_hint=(None, None), height=50)
-
-        # ウィジェットをレイアウトに追加
-        root_layout.add_widget(title_label)
-        button_layout = BoxLayout(spacing=10)
-        button_layout.add_widget(time_button)
-        button_layout.add_widget(weather_button)
-        button_layout.add_widget(schedule_button)
-        button_layout.add_widget(plus_button)
-        button_layout.add_widget(background_button)
-        root_layout.add_widget(button_layout)
-        root_layout.add_widget(confirm_button)
-
-        return root_layout'''
-    
 class MyApp(App):
     def build(self):
         self.screen_manager = ScreenManager()
