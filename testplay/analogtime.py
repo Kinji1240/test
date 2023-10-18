@@ -1,73 +1,56 @@
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Ellipse, Line
-from kivy.clock import Clock
+from tkinter import *
 from datetime import datetime
 import math
 
-class AnalogClock(Widget):
-    def __init__(self, **kwargs):
-        super(AnalogClock, self).__init__(**kwargs)
-        self._update_clock()
-        Clock.schedule_interval(self._update_clock, 1)  # 毎秒アップデート
+WINwidth = 800
+WINcolor1 = 'white'  
+WINcolor2 = 'black'
 
-    def _update_clock(self, *args):
-        self.canvas.clear()
-        with self.canvas:
-            # 時計の中心
-            Color(0, 0, 0)
-            Ellipse(pos=(self.center_x - 10, self.center_y - 10), size=(20, 20))
+# 以前のコードと同じです
 
-            # 時計のふち
-            Color(0.7, 0.7, 0.7)  # グレー
-            Ellipse(pos=(self.center_x - self.width * 0.48, self.center_y - self.width * 0.48),
-                    size=(self.width * 0.96, self.width * 0.96), angle_end=360)
+def switch_background_color():
+    global bg_color
+    if bg_color == WINcolor1:
+        bg_color = WINcolor2
+    else:
+        bg_color = WINcolor1
+    draw_clock()
 
-            # 時刻のメモリ
-            for i in range(12):
-                angle = math.radians(30 * i - 90)
-                x1 = self.center_x + self.width * 0.42 * math.cos(angle)
-                y1 = self.center_y + self.width * 0.42 * math.sin(angle)
-                x2 = self.center_x + self.width * 0.45 * math.cos(angle)
-                y2 = self.center_y + self.width * 0.45 * math.sin(angle)
-                Line(points=[x1, y1, x2, y2], width=2)
+def draw_clock():
+    global w
+    w.delete(ALL)
 
-                # 数字を追加
-                num = i + 1
-                x = self.center_x + self.width * 0.35 * math.cos(angle)
-                y = self.center_y + self.width * 0.35 * math.sin(angle)
-                Color(0, 0, 0)
-                self._draw_text(str(num), x, y)
+    # 以前のコードと同じです
 
-            # 秒針
-            current_time = datetime.now()
-            japan_time = current_time.astimezone(timezone('Asia/Tokyo'))
-            seconds = japan_time.second
-            angle = math.radians(6 * seconds - 90)  # 1秒あたり6度
-            self._draw_hand(angle, self.center_x, self.center_y, self.width * 0.4, (0, 0, 1))  # 水色
+    # 数字を描画（背景色に合わせて切り替え）
+    if bg_color == WINcolor1:
+        font_color = 'black'
+    else:
+        font_color = 'white'
+    
+    Fx = 0
+    Fy = FontSize / 10
+    R = S_length + FontSize * 0.9
+    A = 0
+    for i in range(1, 13):
+        A = A + 30
+        Tx = R * math.cos(A / 180 * math.pi)
+        Ty = R * math.sin(A / 180 * math.pi)
+        w.create_text(WINwidth / 2 + Ty - Fx, WINheight / 2 - Tx + Fy, text=i, font=("", FontSize, "bold"), fill=font_color)
 
-            # 分針
-            minutes = japan_time.minute
-            angle = math.radians(6 * (minutes + seconds / 60) - 90)
-            self._draw_hand(angle, self.center_x, self.center_y, self.width * 0.35, (0, 0, 1))  # 水色
+    w.configure(background=bg_color)
 
-            # 時針
-            hours = japan_time.hour
-            if hours > 12:
-                hours -= 12
-            angle = math.radians(30 * (hours + minutes / 60) - 90)
-            self._draw_hand(angle, self.center_x, self.center_y, self.width * 0.3, (0, 0, 1))  # 水色
+Clock = Tk()
+Clock.title("AnalogClock")
 
-    def _draw_hand(self, angle, x, y, length, color):
-        Color(*color)  # 指定された色
-        Line(points=[x, y, x + length * math.cos(angle), y + length * math.sin(angle)], width=2)
+w = Canvas(Clock, width=WINwidth, height=WINheight, background=bg_color)
+w.pack()
 
+bg_color = WINcolor1
 
-class AnalogClockApp(App):
-    def build(self):
-        return AnalogClock()
+button = Button(Clock, text="Change Background", command=switch_background_color)
+button.pack(pady=10)
 
-if __name__ == '__main__':
-    from pytz import timezone  # 追加
-    from kivy.uix.label import Label  # 追加
-    AnalogClockApp().run()
+draw_clock()
+
+Clock.mainloop()
