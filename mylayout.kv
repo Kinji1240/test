@@ -11,6 +11,11 @@
             id: my_image
             source: ""
             size_hint: (1, 5)
+        
+        Label:
+            id: view_label
+            text: '-'
+    
 
         GridLayout:
             cols:3
@@ -30,16 +35,22 @@
                 on_press: root.press2()
             
             Button:
-                text: "saikou!!"
+                text: "最高!!"
                 font_name: "NikkyouSans-mLKax"
                 pos_hint: {"center_x": 0.5}
                 size_hint: (1, 1)
                 on_press: root.press3()
                 
             Button:
-                text: "iyasi!!"
+                text: "癒し"
                 font_name: "NikkyouSans-mLKax"
-                on_release: root.manager.current = 'goto01.txt'
                 pos_hint: {"center_x": 0.5}
                 size_hint: (1, 1)
-                on_press: root.press4()
+                on_press: root.button_clicked()
+
+            Button:
+                text: "時間"
+                font_name: "NikkyouSans-mLKax"
+                pos_hint: {"center_x": 0.5}
+                size_hint: (1, 1)
+                on_press: root.button_clicked()
