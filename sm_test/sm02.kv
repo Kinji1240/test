@@ -1,4 +1,4 @@
-#: import SlideTransition kivy.uix.screenmanager.SlideTransition
+#: import RiseInTransition kivy.uix.screenmanager.RiseInTransition
  
 <Widget>:
  
@@ -11,12 +11,12 @@
             Button:
                 text: '画面1を表示'
                 on_release:
-                    sm.transition = SlideTransition(direction='right')
+                    sm.transition = RiseInTransition()
                     sm.current = 'screen_one'
             Button:
                 text: '画面2を表示'
                 on_release:
-                    sm.transition = SlideTransition(direction='left')
+                    sm.transition = RiseInTransition()
                     sm.current = 'screen_two'
  
         ScreenManager:
