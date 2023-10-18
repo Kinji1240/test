@@ -12,21 +12,32 @@ import japanize_kivy            # [パターン１] 日本語表示させる jap
 
 class HomeScreen(Screen):
     def __init__(self, **kwargs):
+        super(HomeScreen, self).__init__(**kwargs)
 
         # ルートレイアウト
         root_layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
 
         # タイトルラベル
-        title_label = Button(text="ほしい機能を選んでね", size_hint=(1, None), height=50, disabled=True, halign='center', valign='middle')
+        title_label = Label(text="ほしい機能を選んでね", size_hint=(1, None), height=50, halign='center', valign='middle')
+        root_layout.add_widget(title_label)
 
-        super(HomeScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
-        button = Button(text="時間表示", on_release=self.go_to_second_screen)
-        layout.add_widget(button)
-        self.add_widget(layout)
+        # 時間表示ボタン
+        time_button = Button(text="時間表示", on_release=self.go_to_second_screen)
+        root_layout.add_widget(time_button)
+
+        # もう一つの時間表示ボタン
+        time_button2 = Button(text="時間表示 (2)", on_release=self.go_to_serd_screen)
+        root_layout.add_widget(time_button2)
+
+        # レイアウトを画面に追加
+        self.add_widget(root_layout)
 
     def go_to_second_screen(self, instance):
         app.screen_manager.current = "second"
+
+    
+    def go_to_serd_screen(self, instance):
+        app.screen_manager.current = "serd"
 
 
 
