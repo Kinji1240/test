@@ -18,7 +18,7 @@ class TimeDisplayApp(App):
         self.time_label.text = self.get_japanese_time()
 
     def get_japanese_time(self):
-        current_time = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
+        current_time = time.strftime("%H:%M:%S", time.localtime())
         return current_time
 
 if __name__ == '__main__':
