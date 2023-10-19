@@ -60,7 +60,7 @@ def draw_clock():
     
     w.create_line(WINwidth / 2, WINheight / 2, WINwidth / 2 + H_y, WINheight / 2 - H_x, width=H_LINEwidth, fill="white")  # 時針
     w.create_line(WINwidth / 2, WINheight / 2, WINwidth / 2 + M_y, WINheight / 2 - M_x, width=M_LINEwidth, fill="white")  # 分針
-    w.create_line(WINwidth / 2, WINheight / 2, WINwidth / 2 + S_y, WINheight / 2 - S_x, width=S_LINEwidth, fill="red")  # 秒針
+    w.create_line(WINwidth / 2, WINheight / 2, WINwidth / 2 + S_y, WINheight / 2 - S_x, width=S_LINEwidth, fill="lightblue")  # 秒針（水色）
 
     w.update()
 
@@ -69,7 +69,7 @@ Clock = Tk()
 Clock.title("AnalogClock")
 
 # Canvas を作成
-w = Canvas(Clock, width=WINwidth, height=WINheight, background=rainbow_colors[color_index])
+w = Canvas(Clock, width=WINwidth, height=WINheight, background="black")  # 背景色を黒色に変更
 w.pack()
 
 # 背景色切り替えボタンを追加
