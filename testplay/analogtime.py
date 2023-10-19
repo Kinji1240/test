@@ -20,11 +20,19 @@ S_LINEwidth = 1
 # FontSize をグローバルスコープで定義
 FontSize = int(WINwidth / 14)
 
-def switch_background_color():
+# 数字の色を変更する関数
+def change_number_color(new_color):
     global color_index
-    color_index = (color_index + 1) % len(rainbow_colors)
-    bg_color = rainbow_colors[color_index]
-    w.configure(background=bg_color)
+    color_index = rainbow_colors.index(new_color)
+    w.itemconfig(time_text, fill=new_color)
+    update_button_states()
+
+def update_button_states():
+    for button in color_buttons:
+        if button["text"] == rainbow_colors[color_index]:
+            button["state"] = "disabled"
+        else:
+            button["state"] = "active"
 
 def draw_clock():
     global w  # グローバルの w キャンバスを使用
@@ -53,7 +61,8 @@ def draw_clock():
     S_x = math.cos(S_A) * S_length
     S_y = math.sin(S_A) * S_length
 
-    w.create_text(WINwidth / 2, WINheight / 2 + WINwidth / 8, text=datetime.now().strftime('%Y/%m/%d %H:%M:%S'), font=("", int(FontSize / 1.5), "bold"), fill="white")  # 年月日時分秒
+    global time_text
+    time_text = w.create_text(WINwidth / 2, WINheight / 2 + WINwidth / 8, text=datetime.now().strftime('%Y/%m/%d %H:%M:%S'), font=("", int(FontSize / 1.5), "bold"), fill=rainbow_colors[color_index])  # 年月日時分秒
 
     w.create_oval(WINwidth / 2 - 5, WINheight / 2 - 5, WINwidth / 2 + 5, WINheight / 2 + 5, fill="black")
     w.create_oval(5, 5, WINwidth - 5, WINheight - 5, width=2)
@@ -72,9 +81,14 @@ Clock.title("AnalogClock")
 w = Canvas(Clock, width=WINwidth, height=WINheight, background="black")  # 背景色を黒色に変更
 w.pack()
 
-# 背景色切り替えボタンを追加
-button = Button(Clock, text="Change Background", command=switch_background_color)
-button.pack(pady=10)
+# 数字の色変更ボタンを追加
+color_buttons = []
+for i, color in enumerate(rainbow_colors):
+    color_button = Button(Clock, text=color, command=lambda color=color: change_number_color(color))
+    color_button.pack(side=LEFT, padx=5)
+    color_buttons.append(color_button)
+
+update_button_states()
 
 try:
     while True:
