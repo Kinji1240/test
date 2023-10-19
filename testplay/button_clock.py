@@ -9,7 +9,7 @@ def call_analogtime():
 
 def call_another_script():
     try:
-        subprocess.run(["python", "C:\\Users\\204004\\Desktop\\test\\testplay\\anotherscript.py"])
+        subprocess.run(["python", "C:\\Users\\204004\\Desktop\\test\\testplay\\time.py"])
     except Exception as e:
         print(f"Error: {e}")
 
