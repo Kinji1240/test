@@ -1,29 +1,31 @@
-import requests
-from bs4 import BeautifulSoup
+import tkinter as tk
+import csv
 
-# 気象庁のウェブサイトのURL
-url = "https://www.jma.go.jp/jp/yoho/"
+# CSVファイルから情報を読み込む関数
+def read_csv(file_path):
+    data = []
+    with open(file_path, 'r', encoding='utf-8') as file:
+        csv_reader = csv.reader(file)
+        next(csv_reader)  # ヘッダー行をスキップ
+        for row in csv_reader:
+            data.append(row)
+    return data
 
-# URLからHTMLデータを取得
-response = requests.get(url)
+# Tkinterウィンドウを作成
+window = tk.Tk()
+window.title("天気情報")
 
-# HTTPリクエストが成功したか確認
-if response.status_code == 200:
-    # レスポンスのテキストを取得
-    html = response.text
+# CSVファイルのパス
+csv_file_path = "weather_report.csv"
 
-    # BeautifulSoupを使用してHTMLを解析
-    soup = BeautifulSoup(html, "html.parser")
+# CSVファイルから情報を読み込み
+data = read_csv(csv_file_path)
 
-    # 例：天気情報の部分を抽出
-    weather_info = soup.find("div", class_="forecast-today")
-    
-    if weather_info:
-        # 天気情報を表示
-        print("天気情報:")
-        print(weather_info.text.strip())
-    else:
-        print("天気情報が見つかりませんでした。")
+# ラベルを作成して情報を表示
+for row_idx, row_data in enumerate(data):
+    for col_idx, cell_data in enumerate(row_data):
+        label = tk.Label(window, text=cell_data, borderwidth=1, relief="solid")
+        label.grid(row=row_idx, column=col_idx, padx=5, pady=5)
 
-else:
-    print("HTTPリクエストが失敗しました。ステータスコード:", response.status_code)
+# ウィンドウを表示
+window.mainloop()
