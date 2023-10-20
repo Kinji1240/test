@@ -1,9 +1,95 @@
-class Postmenu(Screen):
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.screenmanager import ScreenManager, Screen
 
-    def searchtitle(self):
-        t = self.ids.movietitle.text
-        self.title = '+'.join(t.split())
+import japanize_kivy            # [パターン１] 日本語表示させる japanize_kivy
+                                #              モジュールを import する
+                                #             (この１行のみで可能)
+                                #             (日本語フォント：IPAexゴシックで表示される)
 
-        # refer to another class ここで別スクリーンのIDに格納する
-        self.manager.get_screen('post_second').ids.infomation.text = self.title
-    pass
+
+class HomeScreen(Screen):
+    def __init__(self, **kwargs):
+
+        # ルートレイアウト
+        root_layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
+
+        # タイトルラベル
+        title_label = Button(text="ほしい機能を選んでね", size_hint=(1, None), height=50, disabled=True, halign='center', valign='middle')
+
+        super(HomeScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        button = Button(text="時間表示", on_release=self.go_to_second_screen)
+        layout.add_widget(button)
+        self.add_widget(layout)
+
+    def go_to_second_screen(self, instance):
+        app.screen_manager.current = "second"
+
+
+
+class SecondScreen(Screen):
+    def __init__(self, **kwargs):
+        super(SecondScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        button = Button(text="次へ", on_release=self.go_to_home_screen)
+        layout.add_widget(button)
+        self.add_widget(layout)
+
+    def go_to_home_screen(self, instance):
+        app.screen_manager.current = "serd"
+
+class SerdScreen(Screen):
+    def __init__(self, **kwargs):
+        super(SerdScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        button = Button(text="戻る", on_release=self.go_to_serd_screen)
+        layout.add_widget(button)
+        self.add_widget(layout)
+
+    def go_to_serd_screen(self, instance):
+        app.screen_manager.current = "home"
+
+    '''def go_to_second_screen(self, instance):
+        app.screen_manager.current = "second"
+
+        # ボタンを作成し、レイアウトに追加
+        
+        weather_button = Button(text="天気表示")
+        schedule_button = Button(text="予定表示")
+        plus_button = Button(text="+")
+        background_button = Button(text="背景")
+        
+        # 確定ボタン
+        confirm_button = Button(text="確定", size_hint=(None, None), height=50)
+
+        # ウィジェットをレイアウトに追加
+        root_layout.add_widget(title_label)
+        button_layout = BoxLayout(spacing=10)
+        button_layout.add_widget(time_button)
+        button_layout.add_widget(weather_button)
+        button_layout.add_widget(schedule_button)
+        button_layout.add_widget(plus_button)
+        button_layout.add_widget(background_button)
+        root_layout.add_widget(button_layout)
+        root_layout.add_widget(confirm_button)
+
+        return root_layout'''
+    
+class MyApp(App):
+    def build(self):
+        self.screen_manager = ScreenManager()
+        home_screen = HomeScreen(name="home")
+        self.screen_manager.add_widget(home_screen)
+        second_screen = SecondScreen(name="second")
+        self.screen_manager.add_widget(second_screen)
+        serd_screen = SerdScreen(name="serd")
+        self.screen_manager.add_widget(serd_screen)
+        return self.screen_manager
+    
+if __name__ == '__main__':
+    app = MyApp()
+    #app = FeatureSelectionApp()
+    app.run()
