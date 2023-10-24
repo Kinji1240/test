@@ -1,8 +1,11 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
+from kivy.uix.button import Button
 from kivy.graphics import Rectangle
 from kivy.core.window import Window
+from kivy.metrics import cm
+import japanize_kivy   
 
 class MyKivyApp(App):
     def build(self):
@@ -17,20 +20,19 @@ class MyKivyApp(App):
 
         label = Label(text='Kivyサンプルアプリ', font_name=font_name, font_size=24)
 
+        # ボタンを作成し、レイアウトに追加
+        button = Button(text='クリックしてください')
+        
+        # ボタンの大きさを縦3cm、横3cmに設定
+        button.size_hint = (None, None)
+        button.size = (cm(3), cm(3))
+        
         layout.add_widget(label)
+        layout.add_widget(button)
+        
         return layout
 
 if __name__ == '__main__':
     MyKivyApp().run()
-
-
-    #このコードでは、Rectangleのposを (0, 0) に設定し、sizeを Window.size に
-    # 設定することで、背景画像をウィンドウの全画面に拡大表示しています。
-    # Window.sizeは現在のウィンドウのサイズを表します。
-    #これにより、背景画像がウィンドウ全体に表示されます。
-    # ファイルパスが正しいことを確認し、ファイルが存在していることも
-    # 確認してください。
-
-
 
 
