@@ -41,7 +41,8 @@ class MainApp(App):
 
     def launch_main2(self, instance):
         # main2.pyを実行
-        os.system("python main2.py")
+        os.system("python weather2.py")
+        os.system("python weathersearch.py")
 
 if __name__ == "__main__":
     MainApp().run()
