@@ -7,6 +7,7 @@ from kivy.uix.gridlayout import GridLayout
 import os
 import japanize_kivy
 
+
 class MainApp(App):
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
