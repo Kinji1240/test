@@ -10,9 +10,9 @@ import japanize_kivy            # [パターン１] 日本語表示させる jap
                                 #             (日本語フォント：IPAexゴシックで表示される)
 
 
-class HomeScreen(Screen):
+class Initial2Screen(Screen):
     def __init__(self, **kwargs):
-        super(HomeScreen, self).__init__(**kwargs)
+        super(Initial2Screen, self).__init__(**kwargs)
 
         # ルートレイアウト
         root_layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
@@ -83,7 +83,7 @@ class SerdScreen(Screen):
 class MyApp(App):
     def build(self):
         self.screen_manager = ScreenManager()
-        home_screen = HomeScreen(name="home")
+        home_screen = Initial2Screen(name="home")
         self.screen_manager.add_widget(home_screen)
         second_screen = SecondScreen(name="second")
         self.screen_manager.add_widget(second_screen)
