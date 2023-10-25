@@ -26,7 +26,7 @@ class MainApp(App):
         button2 = Button(text="天気予報", size_hint=(None, None))
         button2.bind(on_press=self.launch_main3)
 
-        button3 = Button(text="天気予報", size_hint=(None, None))
+        button3 = Button(text="予定表示", size_hint=(None, None))
         button3.bind(on_press=self.launch_main4)
 
         layout.add_widget(title_label)
