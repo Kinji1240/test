@@ -29,11 +29,15 @@ class MainApp(App):
         button3 = Button(text="予定表示", size_hint=(None, None))
         button3.bind(on_press=self.launch_main4)
 
+        button4 = Button(text="背景設定", size_hint=(None, None))
+        button4.bind(on_press=self.launch_main5)
+
         layout.add_widget(title_label)
         layout.add_widget(Widget())  # 上部の余白用
         layout.add_widget(button1)
         layout.add_widget(button2)
         layout.add_widget(button3)
+        layout.add_widget(button4)
 
         return layout
 
@@ -49,6 +53,10 @@ class MainApp(App):
     def launch_main4(self, instance):
         # main3.pyを実行
         os.system("python Calendar.py")
+
+    def launch_main5(self, instance):
+        # main3.pyを実行
+        os.system("python haikei.py")
 
 if __name__ == "__main__":
     MainApp().run()
