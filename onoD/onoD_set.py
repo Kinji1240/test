@@ -19,7 +19,7 @@ class Test(FloatLayout):
         self.add_widget(btn)
 
     def click(self,btn):
-        x = 120
+        x = 70
         y = 80
         self.add_widget(Button(text="etc", pos=(x,y), size_hint=(0.1,0.1)))
 
