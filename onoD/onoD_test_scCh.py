@@ -1,95 +1,73 @@
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
+from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.textinput import TextInput
+from kivy.uix.spinner import Spinner
+import japanize_kivy
 
-import japanize_kivy            # [パターン１] 日本語表示させる japanize_kivy
-                                #              モジュールを import する
-                                #             (この１行のみで可能)
-                                #             (日本語フォント：IPAexゴシックで表示される)
-
-
-class HomeScreen(Screen):
-    def __init__(self, **kwargs):
-
-        # ルートレイアウト
-        root_layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
-
-        # タイトルラベル
-        title_label = Button(text="ほしい機能を選んでね", size_hint=(1, None), height=50, disabled=True, halign='center', valign='middle')
-
-        super(HomeScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
-        button = Button(text="時間表示", on_release=self.go_to_second_screen)
-        layout.add_widget(button)
-        self.add_widget(layout)
-
-    def go_to_second_screen(self, instance):
-        app.screen_manager.current = "second"
-
-
-
-class SecondScreen(Screen):
-    def __init__(self, **kwargs):
-        super(SecondScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
-        button = Button(text="次へ", on_release=self.go_to_home_screen)
-        layout.add_widget(button)
-        self.add_widget(layout)
-
-    def go_to_home_screen(self, instance):
-        app.screen_manager.current = "serd"
-
-class SerdScreen(Screen):
-    def __init__(self, **kwargs):
-        super(SerdScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
-        button = Button(text="戻る", on_release=self.go_to_serd_screen)
-        layout.add_widget(button)
-        self.add_widget(layout)
-
-    def go_to_serd_screen(self, instance):
-        app.screen_manager.current = "home"
-
-    '''def go_to_second_screen(self, instance):
-        app.screen_manager.current = "second"
-
-        # ボタンを作成し、レイアウトに追加
-        
-        weather_button = Button(text="天気表示")
-        schedule_button = Button(text="予定表示")
-        plus_button = Button(text="+")
-        background_button = Button(text="背景")
-        
-        # 確定ボタン
-        confirm_button = Button(text="確定", size_hint=(None, None), height=50)
-
-        # ウィジェットをレイアウトに追加
-        root_layout.add_widget(title_label)
-        button_layout = BoxLayout(spacing=10)
-        button_layout.add_widget(time_button)
-        button_layout.add_widget(weather_button)
-        button_layout.add_widget(schedule_button)
-        button_layout.add_widget(plus_button)
-        button_layout.add_widget(background_button)
-        root_layout.add_widget(button_layout)
-        root_layout.add_widget(confirm_button)
-
-        return root_layout'''
-    
-class MyApp(App):
+class CalendarApp(App):
     def build(self):
-        self.screen_manager = ScreenManager()
-        home_screen = HomeScreen(name="home")
-        self.screen_manager.add_widget(home_screen)
-        second_screen = SecondScreen(name="second")
-        self.screen_manager.add_widget(second_screen)
-        serd_screen = SerdScreen(name="serd")
-        self.screen_manager.add_widget(serd_screen)
-        return self.screen_manager
-    
+        layout = GridLayout(cols=7, spacing=5, size_hint=(None, None), width=420)
+
+        self.days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+
+        for day in self.days:
+            layout.add_widget(Label(text=day, size_hint_y=None, height=44, color=(0.1, 0.5, 0.6, 1)))
+
+        self.day_buttons = []
+
+        for day_num in range(1, 32):
+            day_button = Button(text=str(day_num), size_hint=(None, None), size=(60, 60), background_color=(0.5, 0.7, 0.8, 1), on_release=self.show_popup)
+            layout.add_widget(day_button)
+            self.day_buttons.append(day_button)
+
+        self.spinner = Spinner(text='Select Month', values=[str(i) for i in range(1, 13)], size_hint=(None, None), size=(150, 44), pos_hint={'center_x': 0.5})
+        self.spinner.bind(text=self.on_spinner_select)
+
+        self.layout = BoxLayout(orientation='vertical', spacing=5, padding=5)
+        self.layout.add_widget(self.spinner)
+        self.layout.add_widget(layout)
+
+        return self.layout
+
+    def on_spinner_select(self, instance, value):
+        selected_month = instance.text
+        days_in_month = int(selected_month)
+
+        for i, day_button in enumerate(self.day_buttons):
+            if i < days_in_month:
+                day_button.disabled = False
+            else:
+                day_button.disabled = True
+
+    def show_popup(self, instance):
+        if instance.text != '':
+            popup_content = BoxLayout(orientation='vertical', spacing=5, padding=5)
+            popup_content.add_widget(Label(text=f"予定 ({self.spinner.text}/{instance.text})", size_hint_y=None, height=44))
+            popup_content.add_widget(Button(text="予定を入力", on_release=self.show_input))
+            popup_content.add_widget(Button(text="閉じる", on_release=self.dismiss_popup))
+
+            self.popup = Popup(title=f"予定 ({self.spinner.text}/{instance.text})", content=popup_content, size_hint=(None, None), size=(300, 150), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+            self.popup.open()
+
+    def show_input(self, instance):
+        self.popup.dismiss()
+
+        input_popup_content = BoxLayout(orientation='vertical', spacing=5, padding=5)
+        input_popup_content.add_widget(TextInput(hint_text="予定を入力してください", size_hint_y=None, height=44))
+        input_popup_content.add_widget(Button(text="OK", on_release=self.dismiss_input_popup))
+
+        self.input_popup = Popup(title=f"予定入力", content=input_popup_content, size_hint=(None, None), size=(300, 150), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.input_popup.open()
+
+    def dismiss_input_popup(self, instance):
+        self.input_popup.dismiss()
+
+    def dismiss_popup(self, instance):
+        self.popup.dismiss()
+
 if __name__ == '__main__':
-    app = MyApp()
-    #app = FeatureSelectionApp()
-    app.run()
+    CalendarApp().run()
