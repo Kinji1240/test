@@ -5,6 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
+from kivy.uix.spinner import Spinner
 import japanize_kivy
 
 class RegistrationScreen(Screen):
@@ -12,14 +13,23 @@ class RegistrationScreen(Screen):
         super(RegistrationScreen, self).__init__(**kwargs)
         b = BoxLayout(orientation='vertical')
 
-        self.date_input = TextInput(hint_text="年月日 (例: 2023-10-29)")
+        # 年月日のSpinnerを追加
+        self.year_spinner = Spinner(text='2023', values=('2020', '2021', '2022', '2023', '2024'))
+        self.month_spinner = Spinner(text='1', values=[str(i) for i in range(1, 13)])
+        self.day_spinner = Spinner(text='1', values=[str(i) for i in range(1, 32)])
+
+        date_layout = BoxLayout()
+        date_layout.add_widget(self.year_spinner)
+        date_layout.add_widget(self.month_spinner)
+        date_layout.add_widget(self.day_spinner)
+
         self.time_input = TextInput(hint_text="時間")
         self.person_input = TextInput(hint_text="登録する人")
         self.content_input = TextInput(hint_text="内容")
         self.submit_button = Button(text="予定を追加")
         self.submit_button.bind(on_press=self.add_schedule)
 
-        b.add_widget(self.date_input)
+        b.add_widget(date_layout)
         b.add_widget(self.time_input)
         b.add_widget(self.person_input)
         b.add_widget(self.content_input)
@@ -28,7 +38,10 @@ class RegistrationScreen(Screen):
         self.add_widget(b)
 
     def add_schedule(self, instance):
-        date = self.date_input.text
+        year = self.year_spinner.text
+        month = self.month_spinner.text
+        day = self.day_spinner.text
+        date = f"{year}-{month}-{day}"
         time = self.time_input.text
         person = self.person_input.text
         content = self.content_input.text
