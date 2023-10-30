@@ -17,9 +17,10 @@ class Test(FloatLayout):
         super(Test, self).__init__(**kwargs)
 
         reBtn = Button(text='⇦', pos=(50,50), size_hint=(0.1,0.1), on_press=self.click)
-        lytBtn =Button(text='画面レイアウト設定', pos=(300,300), size_hint=(0.1,0.1), on_press=self.click)
+        lytBtn =Button(text='画面レイアウト設定', pos=(100,300), size_hint=(0.1,0.1), on_press=self.click)
         addFncBtn = Button(text='機能追加', pos=(300,200), size_hint=(0.1,0.1), on_press=self.click)
         bckBtn =Button(text='画面レイアウト設定', pos=(300,100), size_hint=(0.1,0.1), on_press=self.click)
+
 
 
         self.add_widget(reBtn)
