@@ -4,47 +4,51 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Rectangle
-
 import japanize_kivy
+import datetime
 
-class CalendarApp(App):
-    def build(self):
-        self.layout = GridLayout(cols=7)
-        self.days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        self.current_year = 2022
+class CalendarWidget(BoxLayout):
+    def __init__(self, **kwargs):
+        super(CalendarWidget, self).__init__(**kwargs)
+        self.orientation = "vertical"
+        self.days = ["月", "火", "水", "木", "金", "土", "日"]  # 月曜日から始まる曜日順に変更
+        self.current_year = 2023
         self.current_month = 1
 
         self.create_calendar()
 
-        return self.layout
-
     def create_calendar(self):
-        self.layout.clear_widgets()
+        self.clear_widgets()
+
+        # 曜日ラベルを追加
+        days_layout = GridLayout(cols=7)
+        for day in self.days:
+            days_layout.add_widget(Label(text=day, halign='center', valign='middle', bold=True))
+        self.add_widget(days_layout)
 
         # 月の日数を計算
-        days_in_month = 31
-        if self.current_month in [4, 6, 9, 11]:
-            days_in_month = 30
-        elif self.current_month == 2:
-            if (self.current_year % 4 == 0 and self.current_year % 100 != 0) or (self.current_year % 400 == 0):
-                days_in_month = 29
-            else:
-                days_in_month = 28
+        first_day = datetime.date(self.current_year, self.current_month, 1)
+        days_in_month = (first_day.replace(month=first_day.month % 12 + 1, day=1) - first_day).days
 
-        for day in self.days:
-            self.layout.add_widget(Label(text=day, halign='center', valign='middle', bold=True))
+        # 月の1日の曜日を取得 (0=月曜, 6=日曜)
+        first_day_of_week = first_day.weekday()
+
+        # 月の1日が月曜日でない場合、前月の日を埋める
+        for _ in range(first_day_of_week):
+            days_layout.add_widget(Label(text=""))
 
         day_number = 1
         for _ in range(6):  # 6行まで表示
             for _ in range(7):  # 1週間分の日付
                 if day_number <= days_in_month:
-                    with self.layout.canvas.before:
+                    with days_layout.canvas.before:
                         Color(0.1, 0.5, 0.6, 1)
-                        Rectangle(pos=self.layout.pos, size=self.layout.size)
+                        Rectangle(pos=days_layout.pos, size=days_layout.size)
                     day_button = Button(text=str(day_number), background_color=(0.7, 0.7, 0.7, 1))
                     day_button.bind(on_release=self.show_popup)
-                    self.layout.add_widget(day_button)
+                    days_layout.add_widget(day_button)
                     day_number += 1
 
     def prev_month(self, instance):
@@ -77,6 +81,10 @@ class CalendarApp(App):
 
     def dismiss_popup(self, instance):
         self.popup.dismiss()
+
+class CalendarApp(App):
+    def build(self):
+        return CalendarWidget()
 
 if __name__ == '__main__':
     CalendarApp().run()
