@@ -13,8 +13,8 @@ class CalendarApp(App):
         for day in self.days:
             layout.add_widget(Button(text=day, background_normal='', background_color=(0.1, 0.5, 0.6, 1)))
 
-        for _ in range(35):
-            day_button = Button()
+        for day in range(1, 32):  # 1から31までの日付ボタンを作成
+            day_button = Button(text=str(day), background_normal='', background_color=(0.7, 0.7, 0.7, 1))
             day_button.bind(on_release=self.show_popup)
             layout.add_widget(day_button)
 
