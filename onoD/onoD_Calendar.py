@@ -17,6 +17,12 @@ class CalendarGrid(GridLayout):
 
     def populate(self):
         self.clear_widgets()
+        
+        # 曜日ラベルを追加
+        for day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
+            label = Label(text=day, size_hint_y=None, height=40)
+            self.add_widget(label)
+            
         today = datetime.now().day
         for week in calendar.monthcalendar(self.app.year, self.app.month):
             for day in week:
@@ -67,6 +73,11 @@ class CalendarApp(App):
 
         self.root_layout.add_widget(controls_layout)
 
+        # 月のプルダウンメニューを追加
+        self.month_spinner = Spinner(text="Select Month", values=[calendar.month_name[i] for i in range(1, 13)], size_hint=(0.5, 0.1))
+        self.month_spinner.bind(text=self.on_month_select)
+        self.root_layout.add_widget(self.month_spinner)
+
         # Display task for today at the selected time
         self.on_day_selected(Button(text=str(datetime.now().day)))
 
@@ -94,6 +105,10 @@ class CalendarApp(App):
         if self.month > 12:
             self.month = 1
             self.year += 1
+        self.update_calendar()
+
+    def on_month_select(self, instance, value):
+        self.month = list(calendar.month_name).index(instance.text)
         self.update_calendar()
 
     def update_calendar(self):
