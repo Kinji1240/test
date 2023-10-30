@@ -1,59 +1,120 @@
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
-from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
+from datetime import datetime
 import calendar
+
+class CalendarGrid(GridLayout):
+    def __init__(self, app, **kwargs):
+        super().__init__(**kwargs)
+        self.app = app
+        self.cols = 7
+        self.populate()
+
+    def populate(self):
+        self.clear_widgets()
+        
+        # 曜日ラベルを追加
+        for day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
+            label = Label(text=day, size_hint_y=None, height=40)
+            self.add_widget(label)
+            
+        today = datetime.now().day
+        for week in calendar.monthcalendar(self.app.year, self.app.month):
+            for day in week:
+                if day == 0:
+                    label = Label(text="", size_hint_y=None, height=40)
+                    self.add_widget(label)
+                else:
+                    btn = Button(text=str(day), size_hint_y=None, height=40)
+                    if day == today:
+                        btn.background_color = [1, 0.5, 0.5, 1]  # highlight today
+                    btn.bind(on_press=self.app.on_day_selected)
+                    self.add_widget(btn)
 
 class CalendarApp(App):
     def build(self):
-        layout = GridLayout(cols=7)
-        self.days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        self.tasks = {}
+        self.month = datetime.now().month
+        self.year = datetime.now().year
 
-        for day in self.days:
-            layout.add_widget(Button(text=day, background_normal='', background_color=(0.1, 0.5, 0.6, 1)))
+        self.root_layout = BoxLayout(orientation='vertical')
 
-        self.day_buttons = []
+        self.calendar_layout = BoxLayout(size_hint_y=0.7)
+        self.calendar_grid = CalendarGrid(app=self)
+        self.calendar_layout.add_widget(self.calendar_grid)
+        self.root_layout.add_widget(self.calendar_layout)
 
-        for _ in range(35):
-            day_button = Button()
-            day_button.bind(on_release=self.show_popup)
-            layout.add_widget(day_button)
-            self.day_buttons.append(day_button)
+        self.selected_label = Label(text=f"Selected Date: {self.month}/??/{self.year}", size_hint_y=0.1)
+        self.root_layout.add_widget(self.selected_label)
 
-        self.spinner = Spinner(text='Select Month', values=[calendar.month_name[i] for i in range(1, 13)])
-        self.spinner.bind(text=self.on_spinner_select)
-        layout.add_widget(self.spinner)
+        self.time_spinner = Spinner(text="Select Time", values=[f"{i:02d}:00" for i in range(24)], size_hint=(0.5, 0.1))
+        self.root_layout.add_widget(self.time_spinner)
 
-        return layout
+        self.task_view = TextInput(hint_text='Enter your task for the selected time', size_hint_y=0.2)
+        self.root_layout.add_widget(self.task_view)
 
-    def on_spinner_select(self, instance, value):
-        selected_month = instance.text
-        days_in_month = calendar.monthrange(2023, list(calendar.month_name).index(selected_month))[1]
+        controls_layout = BoxLayout(size_hint_y=0.1)
+        prev_btn = Button(text="< Prev")
+        prev_btn.bind(on_press=self.prev_month)
+        controls_layout.add_widget(prev_btn)
+        
+        next_btn = Button(text="Next >")
+        next_btn.bind(on_press=self.next_month)
+        controls_layout.add_widget(next_btn)
 
-        for i, day_button in enumerate(self.day_buttons):
-            if i < days_in_month:
-                day_button.text = str(i + 1)
-                day_button.disabled = False
-            else:
-                day_button.text = ''
-                day_button.disabled = True
+        save_btn = Button(text="Save Task")
+        save_btn.bind(on_press=self.save_task)
+        controls_layout.add_widget(save_btn)
 
-    def show_popup(self, instance):
-        popup_content = GridLayout(rows=3)
-        popup_content.add_widget(TextInput(hint_text="予定を入力してください"))
-        popup_content.add_widget(Button(text="OK", on_release=self.close_popup))
-        popup_content.add_widget(Button(text="キャンセル", on_release=self.dismiss_popup))
+        self.root_layout.add_widget(controls_layout)
 
-        self.popup = Popup(title="予定", content=popup_content, size_hint=(None, None), size=(300, 200))
-        self.popup.open()
+        # 月のプルダウンメニューを追加
+        self.month_spinner = Spinner(text="Select Month", values=[calendar.month_name[i] for i in range(1, 13)], size_hint=(0.5, 0.1))
+        self.month_spinner.bind(text=self.on_month_select)
+        self.root_layout.add_widget(self.month_spinner)
 
-    def close_popup(self, instance):
-        self.popup.dismiss()
+        # Display task for today at the selected time
+        self.on_day_selected(Button(text=str(datetime.now().day)))
 
-    def dismiss_popup(self, instance):
-        self.popup.dismiss()
+        return self.root_layout
+
+    def on_day_selected(self, instance):
+        date_key = f"{self.year}-{self.month}-{instance.text}-{self.time_spinner.text}"
+        self.selected_label.text = f"Selected Date: {self.month}/{instance.text}/{self.year} at {self.time_spinner.text}"
+        self.task_view.text = self.tasks.get(date_key, "")
+
+    def save_task(self, instance):
+        date_key = f"{self.year}-{self.month}-{self.selected_label.text.split('/')[1]}-{self.time_spinner.text}"
+        if date_key:
+            self.tasks[date_key] = self.task_view.text
+
+    def prev_month(self, instance):
+        self.month -= 1
+        if self.month < 1:
+            self.month = 12
+            self.year -= 1
+        self.update_calendar()
+
+    def next_month(self, instance):
+        self.month += 1
+        if self.month > 12:
+            self.month = 1
+            self.year += 1
+        self.update_calendar()
+
+    def on_month_select(self, instance, value):
+        self.month = list(calendar.month_name).index(instance.text)
+        self.update_calendar()
+
+    def update_calendar(self):
+        self.calendar_grid.populate()
+        self.selected_label.text = f"Selected Date: {self.month}/??/{self.year} at {self.time_spinner.text}"
+        self.task_view.text = ""
 
 if __name__ == '__main__':
     CalendarApp().run()
