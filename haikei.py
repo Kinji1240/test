@@ -42,12 +42,12 @@ class BackgroundChangerApp(App):
             Rectangle(pos=self.background_image.pos, size=self.background_image.size)
 
     def change_background(self, instance):
-        # 画像を変更
-        self.background_image.source = 'C:/Users/204004/Desktop/font/light-gray-concrete-wall.jpg'
-
         # カラーピッカーの選択色をCSVファイルに保存
         selected_color = self.color_picker.color
         self.save_color_to_csv(selected_color)
+
+        # 新しい背景画像を設定
+        self.background_image.source = 'C:/Users/204004/Desktop/font/light-gray-concrete-wall.jpg'
 
     def save_color_to_csv(self, color):
         with open('color_settings.csv', 'w', newline='') as csvfile:

@@ -3,7 +3,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Color, Rectangle
-
 import csv
 import japanize_kivy
 import os
@@ -43,7 +42,6 @@ class MainApp(App):
     def launch_main2(self, instance):
         # main2.pyを実行
         os.system("python main2.py")
-        
 
     def on_start(self):
         # CSVファイルから背景色を取得
@@ -56,11 +54,13 @@ class MainApp(App):
             next(reader)  # ヘッダ行をスキップ
             for row in reader:
                 try:
+                    red_value = float(row[0])
                     green_value = float(row[1])
+                    blue_value = float(row[2])
                     break  # 最初の行の値を使用
                 except ValueError:
                     pass
-        return (0, green_value, 0)
+        return (red_value, green_value, blue_value)
 
     def set_background_color(self, color):
         self.root.canvas.before.clear()  # 既存の背景をクリア
