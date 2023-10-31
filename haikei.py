@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.colorpicker import ColorPicker
 from kivy.graphics import Color, Rectangle
+import csv
 import japanize_kivy
 
 class BackgroundChangerApp(App):
@@ -15,8 +16,8 @@ class BackgroundChangerApp(App):
         label = Label(text="背景色を変更")
 
         # カラーピッカー
-        color_picker = ColorPicker()
-        color_picker.bind(color=self.on_color)
+        self.color_picker = ColorPicker()
+        self.color_picker.bind(color=self.on_color)
 
         # 画像ウィジェット
         self.background_image = Image(source='background.jpg')
@@ -27,7 +28,7 @@ class BackgroundChangerApp(App):
 
         # レイアウトにウィジェットを追加
         layout.add_widget(label)
-        layout.add_widget(color_picker)
+        layout.add_widget(self.color_picker)
         layout.add_widget(self.background_image)
         layout.add_widget(button)
 
@@ -43,6 +44,17 @@ class BackgroundChangerApp(App):
     def change_background(self, instance):
         # 画像を変更
         self.background_image.source = 'C:/Users/204004/Desktop/font/light-gray-concrete-wall.jpg'
+
+        # カラーピッカーの選択色をCSVファイルに保存
+        selected_color = self.color_picker.color
+        self.save_color_to_csv(selected_color)
+
+    def save_color_to_csv(self, color):
+        with open('color_settings.csv', 'w', newline='') as csvfile:
+            fieldnames = ['Red', 'Green', 'Blue']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({'Red': color[0], 'Green': color[1], 'Blue': color[2]})
 
 if __name__ == '__main__':
     BackgroundChangerApp().run()

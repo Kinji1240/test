@@ -1,3 +1,4 @@
+import csv
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -9,9 +10,10 @@ from datetime import datetime
 import calendar
 
 class CalendarGrid(GridLayout):
-    def __init__(self, app, **kwargs):
+    def __init__(self, app, csv_data, **kwargs):
         super().__init__(**kwargs)
         self.app = app
+        self.csv_data = csv_data
         self.cols = 7
         self.populate()
 
@@ -42,10 +44,23 @@ class CalendarApp(App):
         self.month = datetime.now().month
         self.year = datetime.now().year
 
+        # CSVファイルの読み込み（UTF-8エンコーディング）
+        self.csv_data = {}
+        with open('schedules.csv', newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                date = row['Date']
+                time = row['Time']
+                person = row['Person']
+                content = row['Content']
+                key = f"{date},{time}"
+                if key not in self.csv_data:
+                    self.csv_data[key] = {'Person': person, 'Content': content}
+
         self.root_layout = BoxLayout(orientation='vertical')
 
         self.calendar_layout = BoxLayout(size_hint_y=0.7)
-        self.calendar_grid = CalendarGrid(app=self)
+        self.calendar_grid = CalendarGrid(app=self, csv_data=self.csv_data)
         self.calendar_layout.add_widget(self.calendar_grid)
         self.root_layout.add_widget(self.calendar_layout)
 
@@ -84,14 +99,18 @@ class CalendarApp(App):
         return self.root_layout
 
     def on_day_selected(self, instance):
-        date_key = f"{self.year}-{self.month}-{instance.text}-{self.time_spinner.text}"
+        date_key = f"{self.year}-{self.month}-{instance.text},{self.time_spinner.text}"
         self.selected_label.text = f"Selected Date: {self.month}/{instance.text}/{self.year} at {self.time_spinner.text}"
-        self.task_view.text = self.tasks.get(date_key, "")
+        task_info = self.csv_data.get(date_key, {"Person": "", "Content": ""})
+        person = task_info.get("Person", "")
+        content = task_info.get("Content", "")
+        self.task_view.text = f"Person: {person}\nContent: {content}"
 
     def save_task(self, instance):
-        date_key = f"{self.year}-{self.month}-{self.selected_label.text.split('/')[1]}-{self.time_spinner.text}"
-        if date_key:
-            self.tasks[date_key] = self.task_view.text
+        date_key = f"{self.year}-{self.month}-{self.selected_label.text.split('/')[1]},{self.time_spinner.text}"
+        person = self.task_view.text.split('\n')[0].replace("Person: ", "")
+        content = self.task_view.text.split('\n')[1].replace("Content: ", "")
+        self.csv_data[date_key] = {'Person': person, 'Content': content}
 
     def prev_month(self, instance):
         self.month -= 1
