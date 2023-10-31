@@ -44,5 +44,5 @@ class MainApp(App):
         # main2.pyを実行
         os.system("python main2.py")
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
     MainApp().run()
