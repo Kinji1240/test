@@ -1,3 +1,4 @@
+from curses.textpad import rectangle
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -66,7 +67,6 @@ class MainApp(App):
         # main3.pyを実行
         os.system("kakuninn.py")
 
-<<<<<<< HEAD
     def on_start(self):
         # CSVファイルから背景色を取得
         color = self.get_background_color_from_csv("MAINSYS/CSV/color_settings.csv")
@@ -90,9 +90,7 @@ class MainApp(App):
         self.root.canvas.before.clear()  # 既存の背景をクリア
         with self.root.canvas.before:
             Color(*color)
-            Rectangle(pos=self.root.pos, size=self.root.size)
+            rectangle(pos=self.root.pos, size=self.root.size)
 
-=======
->>>>>>> a78815b651e1b41975dc282cf4c9a25434edaedd
 if __name__ == "__main__":
     MainApp().run()
