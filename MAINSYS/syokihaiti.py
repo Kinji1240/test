@@ -1,12 +1,11 @@
-from curses.textpad import rectangle
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.widget import Widget
 from kivy.uix.gridlayout import GridLayout
-import os
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.graphics import Color, Rectangle
+import csv
 import japanize_kivy
+import os
 
 class MainApp(App):
     def build(self):
@@ -36,8 +35,8 @@ class MainApp(App):
         button5 = Button(text="確認画面", size_hint=(None, None))
         button5.bind(on_press=self.launch_main6)
 
+        layout.add_widget(Label())  # 上部の余白用
         layout.add_widget(title_label)
-        layout.add_widget(Widget())  # 上部の余白用
         layout.add_widget(button1)
         layout.add_widget(button2)
         layout.add_widget(button3)
@@ -90,7 +89,7 @@ class MainApp(App):
         self.root.canvas.before.clear()  # 既存の背景をクリア
         with self.root.canvas.before:
             Color(*color)
-            rectangle(pos=self.root.pos, size=self.root.size)
+            Rectangle(pos=self.root.pos, size=self.root.size)
 
 if __name__ == "__main__":
     MainApp().run()
