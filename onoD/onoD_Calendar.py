@@ -18,7 +18,6 @@ class CalendarGrid(GridLayout):
     def populate(self):
         self.clear_widgets()
         
-        
         # 曜日ラベルを追加
         for day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
             label = Label(text=day, size_hint_y=None, height=40)

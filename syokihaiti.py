@@ -66,33 +66,5 @@ class MainApp(App):
         # main3.pyを実行
         os.system("kakuninn.py")
 
-<<<<<<< HEAD
-    def on_start(self):
-        # CSVファイルから背景色を取得
-        color = self.get_background_color_from_csv("MAINSYS/CSV/color_settings.csv")
-        self.set_background_color(color)
-
-    def get_background_color_from_csv(self, csv_file):
-        with open(csv_file, "r") as file:
-            reader = csv.reader(file)
-            next(reader)  # ヘッダ行をスキップ
-            for row in reader:
-                try:
-                    red_value = float(row[0])
-                    green_value = float(row[1])
-                    blue_value = float(row[2])
-                    break  # 最初の行の値を使用
-                except ValueError:
-                    pass
-        return (red_value, green_value, blue_value)
-
-    def set_background_color(self, color):
-        self.root.canvas.before.clear()  # 既存の背景をクリア
-        with self.root.canvas.before:
-            Color(*color)
-            Rectangle(pos=self.root.pos, size=self.root.size)
-
-=======
->>>>>>> a78815b651e1b41975dc282cf4c9a25434edaedd
 if __name__ == "__main__":
     MainApp().run()
