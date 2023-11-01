@@ -41,7 +41,7 @@ class MainApp(App):
 
     def launch_main2(self, instance):
         # main2.pyを実行
-        os.system("python main2.py")
+        os.system("python syokihaiti.py")
 
     def on_start(self):
         # CSVファイルから背景色を取得
