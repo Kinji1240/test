@@ -39,14 +39,12 @@ class BackgroundChangerApp(App):
         return layout
 
     def on_background_color(self, instance, value):
-        # カラーピッカーの色に背景色を変更
         self.background_image.canvas.before.clear()
         with self.background_image.canvas.before:
             Color(*value)
             Rectangle(pos=self.background_image.pos, size=self.background_image.size)
 
     def on_text_color(self, instance, value):
-        # カラーピッカーの色にラベルの文字色を変更
         self.label.color = value
 
     def change_background(self, instance):

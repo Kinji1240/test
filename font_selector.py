@@ -7,9 +7,9 @@ csv_filename = "font_info.csv"
 
 # 利用可能なフォントのリスト
 available_fonts = [
-    "C:/Users/204004/Desktop/font/Mystic Soul.ttf",
-    "C:/Users/204004/Desktop/font/NikkyouSans-mLKax.ttf",
-    "C:/Users/204004/Desktop/font/Togalite-Black.otf"
+    "GTfont/Mystic Soul.ttf",
+    "GTfont/NikkyouSans-mLKax.ttf",
+    "GTfont/Togalite-Black.otf"
 ]
 
 # フォント選択用のウィンドウを表示
