@@ -7,6 +7,7 @@ from kivy.uix.colorpicker import ColorPicker
 from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
+import os  # 追加
 
 class BackgroundChangerApp(App):
     def build(self):
@@ -56,13 +57,23 @@ class BackgroundChangerApp(App):
         background_color = self.background_color_picker.color
         text_color = self.text_color_picker.color
 
-        self.save_colors_to_csv(background_color, text_color)
+        # csvファイルの保存先ディレクトリ
+        csv_dir = 'MAINSYS/CSV'
+
+        # ディレクトリが存在しない場合、作成
+        if not os.path.exists(csv_dir):
+            os.makedirs(csv_dir)
+
+        # csvファイルの保存パス
+        csv_path = os.path.join(csv_dir, 'color_settings.csv')
+
+        self.save_colors_to_csv(csv_path, background_color, text_color)
 
         # 新しい背景画像を設定
         self.background_image.source = 'MAINSYS/FONT/light-gray-concrete-wall.jpg'
 
-    def save_colors_to_csv(self, background_color, text_color):
-        with open('color_settings.csv', 'w', newline='') as csvfile:
+    def save_colors_to_csv(self, csv_file, background_color, text_color):
+        with open(csv_file, 'w', newline='') as csvfile:
             fieldnames = ['BackgroundRed', 'BackgroundGreen', 'BackgroundBlue', 'TextRed', 'TextGreen', 'TextBlue']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
@@ -74,5 +85,6 @@ class BackgroundChangerApp(App):
                 'TextGreen': text_color[1],
                 'TextBlue': text_color[2]
             })
+
 if __name__ == '__main__':
     BackgroundChangerApp().run()
