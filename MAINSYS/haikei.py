@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.colorpicker import ColorPicker
 from kivy.graphics import Color, Rectangle
+import csv
 import japanize_kivy
 
 class BackgroundChangerApp(App):
@@ -15,11 +16,6 @@ class BackgroundChangerApp(App):
         label = Label(text="背景色と文字色を変更")
         self.label = label  # ラベルを属性として保存
 
-<<<<<<< HEAD
-        # カラーピッカー
-        color_picker = ColorPicker()
-        color_picker.bind(color=self.on_color)
-=======
         # カラーピッカー（背景色用）
         self.background_color_picker = ColorPicker()
         self.background_color_picker.bind(color=self.on_background_color)
@@ -27,7 +23,6 @@ class BackgroundChangerApp(App):
         # カラーピッカー（文字色用）
         self.text_color_picker = ColorPicker()
         self.text_color_picker.bind(color=self.on_text_color)
->>>>>>> 4f3a08b97f6193cce05737e70b99bac91eb37fdb
 
         # 画像ウィジェット
         self.background_image = Image(source='background.jpg')
@@ -38,12 +33,8 @@ class BackgroundChangerApp(App):
 
         # レイアウトにウィジェットを追加
         layout.add_widget(label)
-<<<<<<< HEAD
-        layout.add_widget(color_picker)
-=======
         layout.add_widget(self.background_color_picker)
         layout.add_widget(self.text_color_picker)
->>>>>>> 4f3a08b97f6193cce05737e70b99bac91eb37fdb
         layout.add_widget(self.background_image)
         layout.add_widget(button)
 
@@ -56,12 +47,6 @@ class BackgroundChangerApp(App):
             Color(*value)
             Rectangle(pos=self.background_image.pos, size=self.background_image.size)
 
-<<<<<<< HEAD
-    def change_background(self, instance):
-        # 画像を変更
-        self.background_image.source = 'C:/Users/204004/Desktop/font/light-gray-concrete-wall.jpg'
-
-=======
     def on_text_color(self, instance, value):
         # ラベルの文字色を変更
         self.label.color = value
@@ -89,6 +74,5 @@ class BackgroundChangerApp(App):
                 'TextGreen': text_color[1],
                 'TextBlue': text_color[2]
             })
->>>>>>> 4f3a08b97f6193cce05737e70b99bac91eb37fdb
 if __name__ == '__main__':
     BackgroundChangerApp().run()
