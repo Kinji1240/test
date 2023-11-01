@@ -59,7 +59,7 @@ class BackgroundChangerApp(App):
         self.save_colors_to_csv(background_color, text_color)
 
         # 新しい背景画像を設定
-        self.background_image.source = 'C:/Users/204004/Desktop/font/light-gray-concrete-wall.jpg'
+        self.background_image.source = 'MAINSYS/FONT/light-gray-concrete-wall.jpg'
 
     def save_colors_to_csv(self, background_color, text_color):
         with open('color_settings.csv', 'w', newline='') as csvfile:
