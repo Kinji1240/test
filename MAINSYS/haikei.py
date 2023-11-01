@@ -6,7 +6,8 @@ from kivy.uix.image import Image
 from kivy.uix.colorpicker import ColorPicker
 from kivy.graphics import Color, Rectangle
 import csv
-import japanize_kivy
+from kivy.core.window import Window
+from japanize_kivy import japanize
 
 class BackgroundChangerApp(App):
     def build(self):
@@ -28,8 +29,7 @@ class BackgroundChangerApp(App):
         self.background_image = Image(source='background.jpg')
 
         # ボタン
-        button = Button(text="背景と文字色を変更")
-        button.bind(on_release=self.change_background_and_text_color)
+        button = Button(text="背景と文字色を変更", on_press=self.change_background_and_text_color)
 
         # レイアウトにウィジェットを追加
         layout.add_widget(label)
@@ -38,7 +38,17 @@ class BackgroundChangerApp(App):
         layout.add_widget(self.background_image)
         layout.add_widget(button)
 
+        # ウィンドウサイズ変更時にオブジェクトを調整
+        Window.bind(on_resize=self.on_window_resize)
+
         return layout
+
+    def on_window_resize(self, instance, width, height):
+        # ウィンドウサイズが変更されたときに呼ばれるメソッド
+        # オブジェクトのサイズや文字のサイズを調整
+        font_size = int(0.04 * height)  # 画面高さの4%をフォントサイズとする
+        self.label.font_size = font_size
+        # 他のオブジェクトのサイズや位置も調整することができます
 
     def on_background_color(self, instance, value):
         # カラーピッカーの色に背景色を変更
@@ -74,5 +84,6 @@ class BackgroundChangerApp(App):
                 'TextGreen': text_color[1],
                 'TextBlue': text_color[2]
             })
+
 if __name__ == '__main__':
     BackgroundChangerApp().run()
