@@ -10,13 +10,14 @@ import calendar
 
 class CalendarGrid(GridLayout):
     def __init__(self, app, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(**kwargs) 
         self.app = app
         self.cols = 7
         self.populate()
 
     def populate(self):
         self.clear_widgets()
+        
         
         # 曜日ラベルを追加
         for day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
