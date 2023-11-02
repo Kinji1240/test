@@ -15,13 +15,15 @@ class BackgroundChangerApp(App):
         layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
 
         # ラベル
-        label = Label(text="背景色と文字色を変更")
+        label = Label(text="背景色変更")
         self.label = label  # ラベルを属性として保存
 
         # カラーピッカー（背景色用）
         self.background_color_picker = ColorPicker()
         self.background_color_picker.bind(color=self.on_background_color)
-
+        
+        label2 = Label(text="文字色変更")
+        self.label = label2  # ラベルを属性として保存
         # カラーピッカー（文字色用）
         self.text_color_picker = ColorPicker()
         self.text_color_picker.bind(color=self.on_text_color)
@@ -35,6 +37,7 @@ class BackgroundChangerApp(App):
         # レイアウトにウィジェットを追加
         layout.add_widget(label)
         layout.add_widget(self.background_color_picker)
+        layout.add_widget(label2)
         layout.add_widget(self.text_color_picker)
         layout.add_widget(self.background_image)
         layout.add_widget(button)
@@ -61,6 +64,7 @@ class BackgroundChangerApp(App):
     def on_text_color(self, instance, value):
         # ラベルの文字色を変更
         self.label.color = value
+        
 
     def change_background_and_text_color(self, instance):
         # カラーピッカーの選択色をCSVファイルに保存
