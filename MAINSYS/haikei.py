@@ -8,38 +8,52 @@ from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
 import os  # 追加
+from kivy.core.window import Window
 
 class BackgroundChangerApp(App):
     def build(self):
         layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
 
         # ラベル
-        label = Label(text="背景色と文字色を変更")
-        self.label = label  # ラベルを属性として保存
+        label = Label(text="背景色変更")
+        self.labe2 = label  # ラベルを属性として保存
 
         # カラーピッカー（背景色用）
         self.background_color_picker = ColorPicker()
         self.background_color_picker.bind(color=self.on_background_color)
-
+        
+        label2 = Label(text="文字色変更")
+        self.label = label2  # ラベルを属性として保存
         # カラーピッカー（文字色用）
         self.text_color_picker = ColorPicker()
         self.text_color_picker.bind(color=self.on_text_color)
 
         # 画像ウィジェット
-        self.background_image = Image(source='background.jpg')
+        self.background_image = Image(source='')
 
         # ボタン
-        button = Button(text="背景と文字色を変更")
-        button.bind(on_release=self.change_background_and_text_color)
+        button = Button(text="背景と文字色を変更", on_press=self.change_background_and_text_color)
 
         # レイアウトにウィジェットを追加
         layout.add_widget(label)
         layout.add_widget(self.background_color_picker)
+        layout.add_widget(label2)
         layout.add_widget(self.text_color_picker)
-        layout.add_widget(self.background_image)
+        #layout.add_widget(self.background_image)
         layout.add_widget(button)
 
+        # ウィンドウサイズ変更時にオブジェクトを調整
+        Window.bind(on_resize=self.on_window_resize)
+
         return layout
+
+    def on_window_resize(self, instance, width, height):
+        # ウィンドウサイズが変更されたときに呼ばれるメソッド
+        # オブジェクトのサイズや文字のサイズを調整
+        font_size = int(0.04 * height)  # 画面高さの4%をフォントサイズとする
+        self.label.font_size = font_size
+        self.label2.font_size = font_size
+        # 他のオブジェクトのサイズや位置も調整することができます
 
     def on_background_color(self, instance, value):
         # カラーピッカーの色に背景色を変更
@@ -51,6 +65,7 @@ class BackgroundChangerApp(App):
     def on_text_color(self, instance, value):
         # ラベルの文字色を変更
         self.label.color = value
+        
 
     def change_background_and_text_color(self, instance):
         # カラーピッカーの選択色をCSVファイルに保存
@@ -70,7 +85,7 @@ class BackgroundChangerApp(App):
         self.save_colors_to_csv(csv_path, background_color, text_color)
 
         # 新しい背景画像を設定
-        self.background_image.source = 'MAINSYS/FONT/light-gray-concrete-wall.jpg'
+        self.background_image.source = ''
 
     def save_colors_to_csv(self, csv_file, background_color, text_color):
         with open(csv_file, 'w', newline='') as csvfile:
