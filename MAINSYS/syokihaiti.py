@@ -7,6 +7,26 @@ import csv
 import japanize_kivy
 import os
 
+class DraggableButton(Button):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            touch.grab(self)  # タッチをボタンにグラブ
+            return True
+        return super(DraggableButton, self).on_touch_down(touch)
+
+    def on_touch_up(self, touch):
+        if touch.grab_current is self:
+            touch.ungrab(self)  # タッチのグラブを解除
+            return True
+        return super(DraggableButton, self).on_touch_up(touch)
+
+    def on_touch_move(self, touch):
+        if touch.grab_current is self:
+            self.center_x = touch.x
+            self.center_y = touch.y
+            return True
+        return super(DraggableButton, self).on_touch_move(touch)
+
 class MainApp(App):
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
@@ -20,19 +40,19 @@ class MainApp(App):
             halign="center",
         )
 
-        button1 = Button(text="時間表示設定", size_hint=(None, None))
+        button1 = DraggableButton(text="時間表示設定", size_hint=(None, None))
         button1.bind(on_press=self.launch_main2)
 
-        button2 = Button(text="天気予報", size_hint=(None, None))
+        button2 = DraggableButton(text="天気予報", size_hint=(None, None))
         button2.bind(on_press=self.launch_main3)
 
-        button3 = Button(text="予定表示", size_hint=(None, None))
+        button3 = DraggableButton(text="予定表示", size_hint=(None, None))
         button3.bind(on_press=self.launch_main4)
 
-        button4 = Button(text="背景設定", size_hint=(None, None))
+        button4 = DraggableButton(text="背景設定", size_hint=(None, None))
         button4.bind(on_press=self.launch_main5)
 
-        button5 = Button(text="確認画面", size_hint=(None, None))
+        button5 = DraggableButton(text="確認画面", size_hint=(None, None))
         button5.bind(on_press=self.launch_main6)
 
         layout.add_widget(Label())  # 上部の余白用
@@ -83,7 +103,8 @@ class MainApp(App):
 
         with open(csv_file, "r") as file:
             reader = csv.reader(file)
-            next(reader)  # ヘッダ行をスキップ
+            # 1行目をスキップ
+            next(reader)
             for row in reader:
                 try:
                     background_color = (float(row[0]), float(row[1]), float(row[2]))
@@ -110,5 +131,6 @@ class MainApp(App):
         self.root.children[3].color = title_color
         self.root.children[4].color = title_color
         self.root.children[5].color = title_color # タイトルの文字色を変更
+
 if __name__ == "__main__":
     MainApp().run()
