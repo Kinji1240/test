@@ -16,7 +16,7 @@ class BackgroundChangerApp(App):
 
         # ラベル
         label = Label(text="背景色変更")
-        self.label = label  # ラベルを属性として保存
+        self.labe2 = label  # ラベルを属性として保存
 
         # カラーピッカー（背景色用）
         self.background_color_picker = ColorPicker()
@@ -29,7 +29,7 @@ class BackgroundChangerApp(App):
         self.text_color_picker.bind(color=self.on_text_color)
 
         # 画像ウィジェット
-        self.background_image = Image(source='background.jpg')
+        self.background_image = Image(source='')
 
         # ボタン
         button = Button(text="背景と文字色を変更", on_press=self.change_background_and_text_color)
@@ -39,7 +39,7 @@ class BackgroundChangerApp(App):
         layout.add_widget(self.background_color_picker)
         layout.add_widget(label2)
         layout.add_widget(self.text_color_picker)
-        layout.add_widget(self.background_image)
+        #layout.add_widget(self.background_image)
         layout.add_widget(button)
 
         # ウィンドウサイズ変更時にオブジェクトを調整
@@ -52,6 +52,7 @@ class BackgroundChangerApp(App):
         # オブジェクトのサイズや文字のサイズを調整
         font_size = int(0.04 * height)  # 画面高さの4%をフォントサイズとする
         self.label.font_size = font_size
+        self.label2.font_size = font_size
         # 他のオブジェクトのサイズや位置も調整することができます
 
     def on_background_color(self, instance, value):
@@ -84,7 +85,7 @@ class BackgroundChangerApp(App):
         self.save_colors_to_csv(csv_path, background_color, text_color)
 
         # 新しい背景画像を設定
-        self.background_image.source = 'MAINSYS/FONT/light-gray-concrete-wall.jpg'
+        self.background_image.source = ''
 
     def save_colors_to_csv(self, csv_file, background_color, text_color):
         with open(csv_file, 'w', newline='') as csvfile:
