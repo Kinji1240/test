@@ -6,6 +6,7 @@ from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
 import os
+from kivy.core.window import Window
 
 class MainApp(App):
     def build(self):
@@ -14,18 +15,18 @@ class MainApp(App):
         # タイトルのラベル
         title_label = Label(
             text="朝の目覚めにこのシステム",
-            font_size=24,
+            font_size=66,
             size_hint_y=None,
-            height=50,
+            height=500,
             halign="center",
         )
 
         # サブタイトルのラベル
         subtitle_label = Label(
             text="Morning Pi",
-            font_size=16,
+            font_size=51,
             size_hint_y=None,
-            height=50,
+            height=100,
             halign="center",
         )
 
@@ -43,16 +44,23 @@ class MainApp(App):
         center_layout.add_widget(Label())  # 右側の余白
         layout.add_widget(center_layout)
 
+        # ウィンドウサイズ変更時に背景の大きさを調整
+        Window.bind(on_resize=self.on_window_resize)
+
         return layout
+
+    def on_window_resize(self, instance, width, height):
+        # ウィンドウサイズが変更されたときに呼ばれるメソッド
+        self.set_background_color(self.background_color, width, height)
 
     def launch_main2(self, instance):
         # main2.pyを実行
         os.system("python MAINSYS/syokihaiti.py")
 
     def on_start(self):
-        # CSVファイルから背景色と文字の色を取得
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
-        self.set_background_color(background_color)
+        # CSVファイルから背景色を取得
+        self.background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
+        self.set_background_color(self.background_color, Window.width, Window.height)
         self.set_text_color(title_color, subtitle_color)
 
     def get_colors_from_csv(self, csv_file):
@@ -75,11 +83,11 @@ class MainApp(App):
                     pass
         return background_color, title_color, subtitle_color
 
-    def set_background_color(self, color):
+    def set_background_color(self, color, width, height):
         self.root.canvas.before.clear()  # 既存の背景をクリア
         with self.root.canvas.before:
             Color(*color)
-            Rectangle(pos=self.root.pos, size=self.root.size)
+            Rectangle(pos=self.root.pos, size=(width, height))
 
     def set_text_color(self, title_color, subtitle_color):
         # タイトルとサブタイトルの文字色を変更

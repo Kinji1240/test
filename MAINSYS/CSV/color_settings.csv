@@ -1,2 +1,6 @@
 BackgroundRed,BackgroundGreen,BackgroundBlue,TextRed,TextGreen,TextBlue
-1.0,1.0,1.0,0.0,0.4375,0.7
+<<<<<<< HEAD
+0.9125,1,0.9,0.7,1.0,1
+=======
+1.0,1.0,1.0,0.0,0.5,0.125
+>>>>>>> b23e4b8ce37612ecfe83e261d4aed13d95cfebbf
