@@ -8,6 +8,7 @@ from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
 import os  # 追加
+from kivy.core.window import Window
 
 class BackgroundChangerApp(App):
     def build(self):
