@@ -71,10 +71,6 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
-        confirm_button = Button(text="確定", size_hint=(None, None))
-        confirm_button.bind(on_press=self.save_button_positions)
-        layout.add_widget(confirm_button)
-
         Window.bind(on_resize=self.update_background_size)
 
         # 起動時にボタン位置を読み込み
@@ -97,16 +93,6 @@ class MainApp(App):
 
     def launch_main6(self, instance):
         os.system("kakuninn.py")
-
-    def save_button_positions(self, instance):
-        button_positions = []
-        for child in self.layout.children:
-            if isinstance(child, DraggableButton):
-                button_positions.append([child.text, child.center_x, child.center_y])
-
-        with open("MAINSYS/CSV/button_positions.csv", "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerows(button_positions)
 
     def load_button_positions(self):
         button_positions = []
