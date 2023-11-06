@@ -97,7 +97,7 @@ class MainApp(App):
     def load_button_positions(self):
         button_positions = []
         try:
-            with open("MAINSYS/CSV/button_positions.csv", "r", newline="") as file:
+            with open("test/MAINSYS/CSV/button_positions.csv", "r", newline="") as file:
                 reader = csv.reader(file)
                 for row in reader:
                     button_positions.append(row)
@@ -111,11 +111,11 @@ class MainApp(App):
                     child.center_y = float(y)
 
     def on_start(self):
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
 
-        image_link = self.get_image_link_from_csv("MAINSYS/CSV/selected_backgrounds.csv")
+        image_link = self.get_image_link_from_csv("test/MAINSYS/CSV/selected_backgrounds.csv")
         if image_link:
             self.set_background_image(image_link)
 
