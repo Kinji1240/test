@@ -4,8 +4,8 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Color, Rectangle
 import csv
+import japanize_kivy
 import os
-from kivy.config import Config
 
 class DraggableButton(Button):
     def on_touch_down(self, touch):
@@ -28,10 +28,6 @@ class DraggableButton(Button):
         return super(DraggableButton, self).on_touch_move(touch)
 
 class MainApp(App):
-    background_color = (1, 1, 1)  # デフォルトの背景色（白）
-    title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
-    subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
-
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
 
@@ -67,73 +63,67 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
+        with layout.canvas.before:
+            self.background_color = Color(0, 1, 0, 0)  # 青色
+            self.background_rect = Rectangle(pos=layout.pos, size=layout.size)
+
+        layout.bind(pos=self.update_background, size=self.update_background)
+
         return layout
 
     def launch_main2(self, instance):
-        # main2.pyを実行
         os.system("python button_clock.py")
 
     def launch_main3(self, instance):
-        # main3.pyを実行
         os.system("python weather2.py")
         os.system("python weathersearch.py")
 
     def launch_main4(self, instance):
-        # main3.pyを実行
         os.system("python Calendar.py")
 
     def launch_main5(self, instance):
-        # main3.pyを実行
         os.system("python haikei.py")
 
     def launch_main6(self, instance):
-        # main3.pyを実行
         os.system("kakuninn.py")
 
     def on_start(self):
-        # CSVファイルから背景色と文字の色を取得
-        csv_file = "test/LYtest/testB.csv"
-        with open(csv_file, "r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            # 1行目をスキップ
-            next(reader)
-            for row in reader:
-                try:
-                    self.background_color = (float(row[0]), float(row[1]), float(row[2]))
-                    if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
-                        self.title_color = (float(row[3]), float(row[4]), float(row[5]))
-                    if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
-                        self.subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
-                    break  # 最初の行の値を使用
-                except ValueError:
-                    pass
-        self.set_background_color(self.background_color)
-        self.set_text_color(self.title_color, self.subtitle_color)
-
-    def on_window_resize(self, instance, width, height):
-        # ウィンドウサイズが変更されたときに呼ばれるメソッド
-        self.set_background_color(self.background_color, width, height)
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test\LYtest\__pycache__\color_settings.csv")
+        self.set_background_color(background_color)
+        self.set_text_color(title_color, subtitle_color)
 
     def get_colors_from_csv(self, csv_file):
-        background_color = (1, 1, 1)  # デフォルトの背景色（白）
-        title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
-        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒)
+        background_color = (0, 1, 1, 1)
+        title_color = (0, 0, 0, 1)
+        subtitle_color = (0, 0, 0, 1)
 
-        with open(csv_file, "r", encoding="utf-8") as file:
+        with open(csv_file, "r", encoding="UTF-8") as file:
             reader = csv.reader(file)
-            # 1行目をスキップ
-            next(reader)
+            next(reader)  # ヘッダー行をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]))
-                    if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
-                        title_color = (float(row[3]), float(row[4]), float(row[5]))
-                    if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
-                    break  # 最初の行の値を使用
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)
+                    if len(row) > 5:
+                        title_color = (float(row[3]), float(row[4]), float(row[5]), 1)
+                    if len(row) > 8:
+                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]), 1)
+                    break
                 except ValueError:
                     pass
         return background_color, title_color, subtitle_color
 
-    def set_background_color(self, color, width=None, height=None):
-        self.root.canvas.before.clear()  # 既存
+    def update_background(self, instance, value):
+        self.background_rect.pos = instance.pos
+        self.background_rect.size = instance.size
+
+    def set_background_color(self, color):
+        self.background_color.rgba = color
+
+    def set_text_color(self, title_color, subtitle_color):
+        for child in self.root.children:
+            if isinstance(child, Label):
+                child.color = title_color
+
+if __name__ == "__main__":
+    main_app = MainApp()
+    main_app.run()
