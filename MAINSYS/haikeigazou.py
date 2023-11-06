@@ -42,8 +42,15 @@ def save_to_csv(image_link):
     # CSVファイルが既に存在する場合は上書きモード "w" で開く
     with open(csv_file, "w", newline="") as csvfile:
         csv_writer = csv.writer(csvfile)
-        #csv_writer.writerow(["Image_Link"])  # 1行目にカラム名を書き込む
         csv_writer.writerow([image_link])  # データを書き込む
+
+# 「次へ」ボタンが押されたときの処理
+def launch_syokihaiti():
+    os.system("python syokihaiti.py")
+
+# 「次へ」ボタンを作成
+next_button = tk.Button(root, text="次へ", command=launch_syokihaiti)
+next_button.pack()
 
 # ファイル選択ボタンを作成
 select_button = tk.Button(root, text="背景画像を選択", command=change_background)
@@ -52,4 +59,5 @@ select_button.pack()
 # 初期背景を表示
 update_background()
 
+# Tkinterのメインループを実行
 root.mainloop()
