@@ -107,7 +107,7 @@ class MainApp(App):
         # いいえボタン
         no_button = Button(text='いいえ')
         no_button.bind(on_press=self.dismiss_popup)
-
+        
         content.add_widget(yes_button)
         content.add_widget(no_button)
 
@@ -121,6 +121,9 @@ class MainApp(App):
 
     def dismiss_popup(self, instance):
         self.popup.dismiss()
+        if instance.text == 'いいえ':
+            # "syokihaiti.py" を実行
+            os.system("python MAINSYS/teshaikei.py")
 
 if __name__ == "__main__":
     MainApp().run()

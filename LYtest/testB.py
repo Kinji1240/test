@@ -88,7 +88,7 @@ class MainApp(App):
         os.system("kakuninn.py")
 
     def on_start(self):
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("LYtest\__pycache__\color_settings.csv")
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test\LYtest\__pycache__\color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
 
@@ -97,7 +97,7 @@ class MainApp(App):
         title_color = (0, 0, 0, 1)
         subtitle_color = (0, 0, 0, 1)
 
-        with open(csv_file, "r", encoding="UTF-8") as file:
+        with open(csv_file, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             next(reader)  # ヘッダー行をスキップ
             for row in reader:

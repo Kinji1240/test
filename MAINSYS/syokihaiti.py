@@ -1,4 +1,3 @@
-import os
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -6,11 +5,7 @@ from kivy.uix.button import Button
 from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
-from kivy.config import Config
-from kivy.core.window import Window
-
-Config.set('graphics', 'width', 1920)  # ウィンドウの幅
-Config.set('graphics', 'height', 1080)  # ウィンドウの高さ
+import os
 
 class DraggableButton(Button):
     def on_touch_down(self, touch):
@@ -68,6 +63,12 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
+        with layout.canvas.before:
+            self.background_color = Color(0, 1, 0, 0)  # 青色
+            self.background_rect = Rectangle(pos=layout.pos, size=layout.size)
+
+        layout.bind(pos=self.update_background, size=self.update_background)
+
         return layout
 
     def launch_main2(self, instance):
@@ -87,59 +88,42 @@ class MainApp(App):
         os.system("kakuninn.py")
 
     def on_start(self):
-        # CSVファイルから背景色と文字の色を取得
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test\MAINSYS\CSV\color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
 
-        # CSVファイルから背景画像のリンクを取得
-        image_link = self.get_image_link_from_csv("MAINSYS/CSV/selected_backgrounds.csv")
-        if image_link:
-            self.set_background_image(image_link)
-
     def get_colors_from_csv(self, csv_file):
-        background_color = (1, 1, 1)  # デフォルトの背景色（白）
-        title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
-        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
+        background_color = (0, 1, 1, 1)
+        title_color = (0, 0, 0, 1)
+        subtitle_color = (0, 0, 0, 1)
 
-        with open(csv_file, "r") as file:
+        with open(csv_file, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
-            next(reader)  # 1行目をスキップ
+            next(reader)  # ヘッダー行をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]))
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)
                     if len(row) > 5:
-                        title_color = (float(row[3]), float(row[4]), float(row[5]))
+                        title_color = (float(row[3]), float(row[4]), float(row[5]), 1)
                     if len(row) > 8:
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
+                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]), 1)
                     break
                 except ValueError:
                     pass
         return background_color, title_color, subtitle_color
 
-    def get_image_link_from_csv(self, csv_file):
-        if os.path.exists(csv_file):
-            with open(csv_file, "r") as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    return row[0]
-        return None
+    def update_background(self, instance, value):
+        self.background_rect.pos = instance.pos
+        self.background_rect.size = instance.size
 
     def set_background_color(self, color):
-        self.root.canvas.before.clear()
-        with self.root.canvas.before:
-            Color(*color)
-            Rectangle(pos=self.root.pos, size=self.root.size)
+        self.background_color.rgba = color
 
     def set_text_color(self, title_color, subtitle_color):
         for child in self.root.children:
             if isinstance(child, Label):
                 child.color = title_color
 
-    def set_background_image(self, image_link):
-        self.root.canvas.before.clear()
-        with self.root.canvas.before:
-            Rectangle(source=image_link, pos=self.root.pos, size=self.root.size)
-
 if __name__ == "__main__":
-    MainApp().run()
+    main_app = MainApp()
+    main_app.run()
