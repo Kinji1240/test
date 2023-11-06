@@ -64,7 +64,7 @@ class MainApp(App):
         layout.add_widget(button5)
 
         with layout.canvas.before:
-            self.background_color = Color(0, 1, 0, 0)  # 青色
+            self.background_color = Color(0, 1, 0, 1)  # 青色 (RGBA)
             self.background_rect = Rectangle(pos=layout.pos, size=layout.size)
 
         layout.bind(pos=self.update_background, size=self.update_background)
@@ -88,12 +88,12 @@ class MainApp(App):
         os.system("kakuninn.py")
 
     def on_start(self):
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("test\MAINSYS\CSV\color_settings.csv")
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
 
     def get_colors_from_csv(self, csv_file):
-        background_color = (0, 1, 1, 1)
+        background_color = (0, 1, 0, 1)  # 青色 (RGBA)
         title_color = (0, 0, 0, 1)
         subtitle_color = (0, 0, 0, 1)
 
@@ -102,7 +102,7 @@ class MainApp(App):
             next(reader)  # ヘッダー行をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)  # RGBA
                     if len(row) > 5:
                         title_color = (float(row[3]), float(row[4]), float(row[5]), 1)
                     if len(row) > 8:
