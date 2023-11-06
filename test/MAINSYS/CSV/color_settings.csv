@@ -1,2 +1,2 @@
-BackgroundRed,BackgroundGreen,BackgroundBlue,TextRed,TextGreen,TextBlue
-0.7,1,0.775,1,0.6,0.75
+BackgroundRed,BackgroundGreen,BackgroundBlue,BackgroundAlpha,TextRed,TextGreen,TextBlue,TextAlpha
+0.5,0.625,1,1,0.7,1,0.4,1
