@@ -1,3 +1,4 @@
+import os
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -5,7 +6,11 @@ from kivy.uix.button import Button
 from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
-import os
+from kivy.config import Config
+from kivy.core.window import Window
+
+Config.set('graphics', 'width', 1920)  # ウィンドウの幅
+Config.set('graphics', 'height', 1080)  # ウィンドウの高さ
 
 class DraggableButton(Button):
     def on_touch_down(self, touch):
@@ -66,40 +71,31 @@ class MainApp(App):
         return layout
 
     def launch_main2(self, instance):
-        # main2.pyを実行
         os.system("python button_clock.py")
 
     def launch_main3(self, instance):
-        # main3.pyを実行
         os.system("python weather2.py")
         os.system("python weathersearch.py")
 
     def launch_main4(self, instance):
-        # main3.pyを実行
         os.system("python Calendar.py")
 
     def launch_main5(self, instance):
-        # main3.pyを実行
         os.system("python haikei.py")
 
     def launch_main6(self, instance):
-        # main3.pyを実行
         os.system("kakuninn.py")
-
-    def launch_main2(self, instance):
-        # main2.pyを実行
-        os.system("python MAINSYS/syokihaiti.py")
 
     def on_start(self):
         # CSVファイルから背景色と文字の色を取得
         background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
-     
-    def on_window_resize(self, instance, width, height):
-        # ウィンドウサイズが変更されたときに呼ばれるメソッド
-        self.set_background_color(self.background_color, width, height)
 
+        # CSVファイルから背景画像のリンクを取得
+        image_link = self.get_image_link_from_csv("MAINSYS/CSV/selected_backgrounds.csv")
+        if image_link:
+            self.set_background_image(image_link)
 
     def get_colors_from_csv(self, csv_file):
         background_color = (1, 1, 1)  # デフォルトの背景色（白）
@@ -108,36 +104,42 @@ class MainApp(App):
 
         with open(csv_file, "r") as file:
             reader = csv.reader(file)
-            # 1行目をスキップ
-            next(reader)
+            next(reader)  # 1行目をスキップ
             for row in reader:
                 try:
                     background_color = (float(row[0]), float(row[1]), float(row[2]))
-                    if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
+                    if len(row) > 5:
                         title_color = (float(row[3]), float(row[4]), float(row[5]))
-                    if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
+                    if len(row) > 8:
                         subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
-                    break  # 最初の行の値を使用
+                    break
                 except ValueError:
                     pass
         return background_color, title_color, subtitle_color
 
+    def get_image_link_from_csv(self, csv_file):
+        if os.path.exists(csv_file):
+            with open(csv_file, "r") as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    return row[0]
+        return None
+
     def set_background_color(self, color):
-        self.root.canvas.before.clear()  # 既存の背景をクリア
+        self.root.canvas.before.clear()
         with self.root.canvas.before:
             Color(*color)
             Rectangle(pos=self.root.pos, size=self.root.size)
 
     def set_text_color(self, title_color, subtitle_color):
-        # タイトルとサブタイトルの文字色を変更
-        self.root.children[0].color = title_color
-        self.root.children[1].color = title_color  # タイトルの文字色を変更
-        self.root.children[2].color = title_color  # サブタイトルの文字色を変更
-        self.root.children[3].color = title_color
-        self.root.children[4].color = title_color
-        self.root.children[5].color = title_color # タイトルの文字色を変更
+        for child in self.root.children:
+            if isinstance(child, Label):
+                child.color = title_color
+
+    def set_background_image(self, image_link):
+        self.root.canvas.before.clear()
+        with self.root.canvas.before:
+            Rectangle(source=image_link, pos=self.root.pos, size=self.root.size)
 
 if __name__ == "__main__":
     MainApp().run()
-    Window.bind(on_resize=app.on_window_resize)  # ウィンドウのリサイズイベントを検知
-    app.run()
