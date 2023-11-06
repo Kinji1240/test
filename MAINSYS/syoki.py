@@ -116,14 +116,14 @@ class MainApp(App):
 
     def launch_haikeigazou(self, instance):
         # "haikeigazou.py" を実行
-        os.system("python test/MAINSYS/haikeigazou.py")
+        os.system("python MAINSYS/haikeigazou.py")
         self.popup.dismiss()
 
     def dismiss_popup(self, instance):
         self.popup.dismiss()
         if instance.text == 'いいえ':
             # "teshaikei.py" を実行
-            os.system("python test/MAINSYS/teshaikei.py")
+            os.system("python MAINSYS/GTtestmain.py")
 
 if __name__ == "__main__":
     MainApp().run()
