@@ -98,7 +98,7 @@ class MainApp(App):
     def show_confirmation_popup(self, instance):
         # ポップアップウィンドウを作成
         content = BoxLayout(orientation='vertical')
-        content.add_widget(Label(text='「haikeigazou.py」を実行しますか？'))
+        content.add_widget(Label(text='背景画像を選択しますか'))
 
         # はいボタン
         yes_button = Button(text='はい')
