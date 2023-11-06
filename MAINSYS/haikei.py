@@ -66,7 +66,7 @@ class BackgroundChangerApp(App):
         text_color = self.text_color_picker.color
 
         # csvファイルの保存先ディレクトリ
-        csv_dir = 'MAINSYS/CSV'
+        csv_dir = 'test\MAINSYS\CSV'
 
         # ディレクトリが存在しない場合、作成
         if not os.path.exists(csv_dir):
