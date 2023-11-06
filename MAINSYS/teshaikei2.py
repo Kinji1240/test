@@ -123,7 +123,7 @@ class MainApp(App):
     def load_button_positions(self):
         button_positions = []
         try:
-            with open("test/MAINSYS/CSV/color_settings.csv", "r", newline="") as file:
+            with open("test/test/MAINSYS/CSV/color_settings.csv", "r", newline="") as file:
                 reader = csv.reader(file)
                 for row in reader:
                     button_positions.append(row)
