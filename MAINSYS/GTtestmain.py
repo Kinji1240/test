@@ -44,7 +44,7 @@ class MainApp(App):
         layout.add_widget(button5)
 
         # 背景の色をCSVファイルから読み込んで設定
-        self.bg_color = Color(0, 0, 1, 1)  # 背景色（青）
+        self.bg_color = Color(0, 0, 0, 1)  # 背景色（RGBA形式で黒）
         self.bg_rect = Rectangle(pos=layout.pos, size=layout.size)
 
         layout.canvas.before.add(self.bg_color)
@@ -83,15 +83,15 @@ class MainApp(App):
 
     def on_start(self):
         # CSVファイルから背景色と文字の色を取得
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS\CSV\color_settings.csv")
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test\MAINSYS\CSV\color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
         print("背景色:", background_color)
 
     def get_colors_from_csv(self, csv_file):
-        background_color = (0, 0, 0)  # デフォルトの背景色（白）
-        title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
-        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
+        background_color = (0, 0, 0, 1)  # デフォルトの背景色（RGBA形式で黒）
+        title_color = (1, 1, 1, 1)  # デフォルトのタイトル文字色（RGBA形式で白）
+        subtitle_color = (1, 1, 1, 1)  # デフォルトのサブタイトル文字色（RGBA形式で白）
 
         with open(csv_file, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
@@ -99,11 +99,11 @@ class MainApp(App):
             next(reader)
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]))
-                    if len(row) > 3:  # CSVファイルにタイトルの色情報が含まれているか確認
-                        title_color = (float(row[3]), float(row[4]), float(row[5]))
-                    if len(row) > 6:  # CSVファイルにサブタイトルの色情報が含まれているか確認
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), float(row[3]))
+                    if len(row) > 4:  # CSVファイルにタイトルの色情報が含まれているか確認
+                        title_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))
+                    if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
+                        subtitle_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))
                     break  # 最初の行の値を使用
                 except ValueError:
                     pass

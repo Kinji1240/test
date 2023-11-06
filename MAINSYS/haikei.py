@@ -65,6 +65,10 @@ class BackgroundChangerApp(App):
         background_color = self.background_color_picker.color
         text_color = self.text_color_picker.color
 
+        # 背景色と文字色のRGBA値を取得
+        background_red, background_green, background_blue, background_alpha = background_color
+        text_red, text_green, text_blue, text_alpha = text_color
+
         # csvファイルの保存先ディレクトリ
         csv_dir = 'test\MAINSYS\CSV'
 
@@ -75,24 +79,25 @@ class BackgroundChangerApp(App):
         # csvファイルの保存パス
         csv_path = os.path.join(csv_dir, 'color_settings.csv')
 
-        self.save_colors_to_csv(csv_path, background_color, text_color)
+        self.save_colors_to_csv(csv_path, background_red, background_green, background_blue, background_alpha,
+                                text_red, text_green, text_blue, text_alpha)
 
-        # 新しい背景画像を設定
-        # バックグラウンド画像を含む場合に使用
-        pass
-
-    def save_colors_to_csv(self, csv_file, background_color, text_color):
+    def save_colors_to_csv(self, csv_file, background_red, background_green, background_blue, background_alpha,
+                           text_red, text_green, text_blue, text_alpha):
         with open(csv_file, 'w', newline='') as csvfile:
-            fieldnames = ['BackgroundRed', 'BackgroundGreen', 'BackgroundBlue', 'TextRed', 'TextGreen', 'TextBlue']
+            fieldnames = ['BackgroundRed', 'BackgroundGreen', 'BackgroundBlue', 'BackgroundAlpha',
+                          'TextRed', 'TextGreen', 'TextBlue', 'TextAlpha']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerow({
-                'BackgroundRed': background_color[0],
-                'BackgroundGreen': background_color[1],
-                'BackgroundBlue': background_color[2],
-                'TextRed': text_color[0],
-                'TextGreen': text_color[1],
-                'TextBlue': text_color[2]
+                'BackgroundRed': background_red,
+                'BackgroundGreen': background_green,
+                'BackgroundBlue': background_blue,
+                'BackgroundAlpha': background_alpha,
+                'TextRed': text_red,
+                'TextGreen': text_green,
+                'TextBlue': text_blue,
+                'TextAlpha': text_alpha
             })
 
 if __name__ == '__main__':
