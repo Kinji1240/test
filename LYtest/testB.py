@@ -4,8 +4,8 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Color, Rectangle
 import csv
-import japanize_kivy
 import os
+from kivy.config import Config
 
 class DraggableButton(Button):
     def on_touch_down(self, touch):
@@ -28,6 +28,10 @@ class DraggableButton(Button):
         return super(DraggableButton, self).on_touch_move(touch)
 
 class MainApp(App):
+    background_color = (1, 1, 1)  # デフォルトの背景色（白）
+    title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
+    subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
+
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
 
@@ -86,27 +90,36 @@ class MainApp(App):
         # main3.pyを実行
         os.system("kakuninn.py")
 
-    def launch_main2(self, instance):
-        # main2.pyを実行
-        os.system("python MAINSYS/syokihaiti.py")
-
     def on_start(self):
         # CSVファイルから背景色と文字の色を取得
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
-        self.set_background_color(background_color)
-        self.set_text_color(title_color, subtitle_color)
-     
+        csv_file = "test/LYtest/testB.csv"
+        with open(csv_file, "r", encoding="utf-8") as file:
+            reader = csv.reader(file)
+            # 1行目をスキップ
+            next(reader)
+            for row in reader:
+                try:
+                    self.background_color = (float(row[0]), float(row[1]), float(row[2]))
+                    if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
+                        self.title_color = (float(row[3]), float(row[4]), float(row[5]))
+                    if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
+                        self.subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
+                    break  # 最初の行の値を使用
+                except ValueError:
+                    pass
+        self.set_background_color(self.background_color)
+        self.set_text_color(self.title_color, self.subtitle_color)
+
     def on_window_resize(self, instance, width, height):
         # ウィンドウサイズが変更されたときに呼ばれるメソッド
         self.set_background_color(self.background_color, width, height)
 
-
     def get_colors_from_csv(self, csv_file):
         background_color = (1, 1, 1)  # デフォルトの背景色（白）
         title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
-        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
+        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒)
 
-        with open(csv_file, "r") as file:
+        with open(csv_file, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             # 1行目をスキップ
             next(reader)
@@ -122,22 +135,5 @@ class MainApp(App):
                     pass
         return background_color, title_color, subtitle_color
 
-    def set_background_color(self, color):
-        self.root.canvas.before.clear()  # 既存の背景をクリア
-        with self.root.canvas.before:
-            Color(*color)
-            Rectangle(pos=self.root.pos, size=self.root.size)
-
-    def set_text_color(self, title_color, subtitle_color):
-        # タイトルとサブタイトルの文字色を変更
-        self.root.children[0].color = title_color
-        self.root.children[1].color = title_color  # タイトルの文字色を変更
-        self.root.children[2].color = title_color  # サブタイトルの文字色を変更
-        self.root.children[3].color = title_color
-        self.root.children[4].color = title_color
-        self.root.children[5].color = title_color # タイトルの文字色を変更
-
-if __name__ == "__main__":
-    MainApp().run()
-    Window.bind(on_resize=app.on_window_resize)  # ウィンドウのリサイズイベントを検知
-    app.run()
+    def set_background_color(self, color, width=None, height=None):
+        self.root.canvas.before.clear()  # 既存
