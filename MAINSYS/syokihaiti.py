@@ -95,6 +95,11 @@ class MainApp(App):
         background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
+     
+    def on_window_resize(self, instance, width, height):
+        # ウィンドウサイズが変更されたときに呼ばれるメソッド
+        self.set_background_color(self.background_color, width, height)
+
 
     def get_colors_from_csv(self, csv_file):
         background_color = (1, 1, 1)  # デフォルトの背景色（白）
@@ -134,3 +139,5 @@ class MainApp(App):
 
 if __name__ == "__main__":
     MainApp().run()
+    Window.bind(on_resize=app.on_window_resize)  # ウィンドウのリサイズイベントを検知
+    app.run()
