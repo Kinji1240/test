@@ -107,7 +107,7 @@ class MainApp(App):
         # いいえボタン
         no_button = Button(text='いいえ')
         no_button.bind(on_press=self.dismiss_popup)
-
+        
         content.add_widget(yes_button)
         content.add_widget(no_button)
 
