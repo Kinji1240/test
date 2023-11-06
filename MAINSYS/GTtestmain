@@ -43,10 +43,11 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
-        # 背景の設定
-        with layout.canvas.before:
-            self.bg_color = Color(0, 0, 1, 1)  # 背景色（青）
-            self.bg_rect = Rectangle(pos=layout.pos, size=layout.size)
+        self.bg_color = Color(0, 0, 1, 1)  # 背景色（青）
+        self.bg_rect = Rectangle(pos=layout.pos, size=layout.size)
+
+        layout.canvas.before.add(self.bg_color)
+        layout.canvas.before.add(self.bg_rect)
 
         # ウィンドウサイズ変更時に背景サイズを調整
         layout.bind(size=self.adjust_background_size)
@@ -55,8 +56,9 @@ class MainApp(App):
 
     def adjust_background_size(self, instance, value):
         # 背景のサイズをウィンドウサイズに合わせて調整
+        self.bg_rect.pos = instance.pos
         self.bg_rect.size = instance.size
-
+    
     def launch_main2(self, instance):
         # main2.pyを実行
         os.system("python button_clock.py")
