@@ -6,6 +6,11 @@ from kivy.graphics import Color, Rectangle
 import csv
 import japanize_kivy
 import os
+from kivy.config import Config
+from kivy.core.window import Window
+
+Config.set('graphics', 'width', 1920)  # ウィンドウの幅
+Config.set('graphics', 'height', 1080)  # ウィンドウの高さ
 
 class DraggableButton(Button):
     def on_touch_down(self, touch):
@@ -30,7 +35,6 @@ class DraggableButton(Button):
 class MainApp(App):
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
-
         # タイトルのラベル
         title_label = Label(
             text="ほしい機能を選んでね",
@@ -139,5 +143,3 @@ class MainApp(App):
 
 if __name__ == "__main__":
     MainApp().run()
-    Window.bind(on_resize=app.on_window_resize)  # ウィンドウのリサイズイベントを検知
-    app.run()
