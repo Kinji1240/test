@@ -63,8 +63,12 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
+        # 背景色のRGBA値をCSVから読み込み
+        background_color, _, _ = self.get_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
+
+        # 背景の色を設定
         with layout.canvas.before:
-            self.background_color = Color(0, 1, 0, 1)  # 青色 (RGBA)
+            self.background_color = Color(*background_color)  # 背景色をRGBAで設定
             self.background_rect = Rectangle(pos=layout.pos, size=layout.size)
 
         layout.bind(pos=self.update_background, size=self.update_background)
