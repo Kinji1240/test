@@ -1,72 +1,122 @@
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.spinner import Spinner
+# -*- coding: utf-8 -*-
+import requests
+import json
 import csv
 import japanize_kivy
 
-class DataDisplayApp(App):
-    def build(self):
-        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
 
-        # プルダウンメニューを作成
-        self.spinner= Spinner(text='都道府県選択', values=("北海道","東京","大阪") ,size_hint=(0.5, None))
-        spinner =self.spinner
-        # データ取得ボタンを作成
-        data_button = Button(text='データ取得', size_hint=(None, None), width=100, height=50)
-        data_button.bind(on_press=self.data_button_click)
+def cord_opt_csv():
+    # onoD_Opt.csvファイルのパス
+    file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
+
+    # CSVファイルを読み込む
+    with open(file_path, mode='r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        data = list(reader)
         
-        layout.add_widget(self.spinner)
-        layout.add_widget(data_button)
+    # 必要な部分を変更
+    cord = data[2][1]  # watchを文字列に変換して代入
+    prefecture = data[3][1]  
+    return cord
 
-        return layout
-    
-    def data_button_click(self, instance): 
-        selected_prefecture = self.spinner.text
-        print(f"選択された都道府県: {selected_prefecture}")
+def pref_opt_csv():
+    # onoD_Opt.csvファイルのパス
+    file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
 
-        opt_tihou = 0
-
-        if(selected_prefecture == "北海道"):
-            opt_tihou = 0
-            print(opt_tihou)
-        elif(selected_prefecture == "東京"):
-            opt_tihou = 12
-            print(opt_tihou)
-        elif(selected_prefecture == "大阪"):
-            opt_tihou = 26
-            print(opt_tihou)
-           
+    # CSVファイルを読み込む
+    with open(file_path, mode='r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        data = list(reader)
         
-        # ファイルの読み込みと書き込みはここで行います
-        file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_wth_cord.csv'
+    # 必要な部分を変更
+    cord = data[2][1]  
+    prefecture = data[3][1]  
+    return prefecture
 
-        # 既存のCSVファイルを読み込む
-        with open(file_path, mode='r',encoding='utf-8') as file:
-            reader = csv.reader(file)
-            data = list(reader)
-        
-        for i in range(opt_tihou + 1):
-            if(i == opt_tihou ):
-                opt_weather_cord = data[opt_tihou][1]
-                print(opt_weather_cord)
+# エリアコード
+area_dic = cord_opt_csv()
+# CSV出力先
+output_file = "onoD_weather.csv"
+
+# CSVヘッダー
+header = ["都道府県","報告日時","予報日時","天気","気温","最高気温","最低気温"]
+
+def main():
+    make_csv()
+
+def make_csv():
+    with open(output_file, 'w', encoding='utf-8') as f:
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(header)
+
+        # JSONから情報を取得
+        write_lists = get_info()
+
+        # CSV書き込み
+        writer.writerows(write_lists)
+      
 
 
-        # ファイルの読み込みと書き込みはここで行います
-        file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
+def get_info():
+    write_lists = []
+    base_url = "https://www.jma.go.jp/bosai/forecast/data/forecast/"
 
-            # 既存のCSVファイルを読み込む
-        with open(file_path, mode='r') as file:
-            reader = csv.reader(file)
-            data = list(reader)
-        
-        # 必要な部分を変更
-        data[2][1] = opt_weather_cord  # watchを文字列に変換して代入
-        
-        # 新しいCSVファイルに書き出す
-        with open(file_path, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows(data)
+
+    url = base_url + area_dic + ".json"
+
+    res = requests.get(url).json()
+
+    prefecture = pref_opt_csv()
+
+    for re in res:
+
+        reportDatetime = re["reportDatetime"]
+        timeSeries = re["timeSeries"]
+
+        for time in timeSeries:
+            for i in range(len(time["areas"])):
+                    
+                for j in range(len(timeSeries[0]["timeDefines"])):
+                    if 'weathers' not in time["areas"][i]:
+                        weather = ""
+                    else:
+                        weather = time["areas"][i]["weathers"][j]
+
+                    if 'temps' not in time["areas"][i]:
+                        temps = ""
+                    else:
+                        temps = time["areas"][i]["temps"][j]
+
+                    if 'tempsMax' not in time["areas"][i]:
+                        tempsMax = ""
+                    else:
+                        tempsMax = time["areas"][i]["tempsMax"][j]
+
+                    if 'tempsMin' not in time["areas"][i]:
+                        tempsMin = ""
+                    else:
+                        tempsMin = time["areas"][i]["tempsMin"][j]
+
+                    timeDefine = time["timeDefines"][j]
+
+                    pops = time["areas"][i]["pops"][j]  # 降水確率
+                    temps = time["areas"][i]["temps"][j]  # 気温
+                    tempsMax = time["areas"][i]["tempsMax"][j]  # 最高気温
+                    tempsMin = time["areas"][i]["tempsMin"][j]  # 最低気温
+
+                    # 各情報をリストに格納
+                    write_list = []
+                    write_list.append(prefecture)
+                    write_list.append(reportDatetime)
+                    write_list.append(timeDefine)
+                    write_list.append(weather)
+                    write_list.append(pops)
+                    write_list.append(temps)
+                    write_list.append(tempsMax)
+                    write_list.append(tempsMin)
+
+                    write_lists.append(write_list)
+    return write_lists
 
 if __name__ == '__main__':
-    DataDisplayApp().run()
+    main()
