@@ -7,6 +7,7 @@ import csv
 import japanize_kivy
 import os
 from kivy.core.window import Window
+from kivy.uix.popup import Popup
 
 class MainApp(App):
     def build(self):
@@ -36,7 +37,7 @@ class MainApp(App):
 
         # ボタンを中央に配置
         button = Button(text="実行", size_hint=(None, None), size=(150, 50))
-        button.bind(on_press=self.launch_main2)
+        button.bind(on_press=self.show_confirmation_popup)
 
         center_layout = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height=50)
         center_layout.add_widget(Label())  # 左側の余白
@@ -93,6 +94,33 @@ class MainApp(App):
         # タイトルとサブタイトルの文字色を変更
         self.root.children[1].color = title_color  # タイトルの文字色を変更
         self.root.children[2].color = title_color  # サブタイトルの文字色を変更
+
+    def show_confirmation_popup(self, instance):
+        # ポップアップウィンドウを作成
+        content = BoxLayout(orientation='vertical')
+        content.add_widget(Label(text='背景画像を選択しますか'))
+
+        # はいボタン
+        yes_button = Button(text='はい')
+        yes_button.bind(on_press=self.launch_haikeigazou)
+
+        # いいえボタン
+        no_button = Button(text='いいえ')
+        no_button.bind(on_press=self.dismiss_popup)
+
+        content.add_widget(yes_button)
+        content.add_widget(no_button)
+
+        self.popup = Popup(title='確認', content=content, size_hint=(None, None), size=(300, 200))
+        self.popup.open()
+
+    def launch_haikeigazou(self, instance):
+        # "haikeigazou.py" を実行
+        os.system("python MAINSYS/haikeigazou.py")
+        self.popup.dismiss()
+
+    def dismiss_popup(self, instance):
+        self.popup.dismiss()
 
 if __name__ == "__main__":
     MainApp().run()

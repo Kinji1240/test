@@ -1,11 +1,16 @@
+import os
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Color, Rectangle
+from kivy.config import Config
+from kivy.core.window import Window
 import csv
 import japanize_kivy
-import os
+
+Config.set('graphics', 'width', 1920)  # ウィンドウの幅
+Config.set('graphics', 'height', 1080)  # ウィンドウの高さ
 
 class DraggableButton(Button):
     def on_touch_down(self, touch):
@@ -40,6 +45,10 @@ class MainApp(App):
             halign="center",
         )
 
+        # 背景用のRectangle
+        with layout.canvas.before:
+            self.background = Rectangle(source='background.jpg', pos=layout.pos, size=layout.size)
+        
         button1 = DraggableButton(text="時間表示設定", size_hint=(None, None))
         button1.bind(on_press=self.launch_main2)
 
@@ -63,11 +72,8 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
-        with layout.canvas.before:
-            self.background_color = Color(0, 1, 0, 0)  # 青色
-            self.background_rect = Rectangle(pos=layout.pos, size=layout.size)
-
-        layout.bind(pos=self.update_background, size=self.update_background)
+        # ウィンドウのサイズ変更に応じて背景画像サイズを更新
+        Window.bind(on_resize=self.update_background_size)
 
         return layout
 
@@ -88,42 +94,66 @@ class MainApp(App):
         os.system("kakuninn.py")
 
     def on_start(self):
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("LYtest\__pycache__\color_settings.csv")
+        # CSVファイルから背景色と文字の色を取得
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
 
-    def get_colors_from_csv(self, csv_file):
-        background_color = (0, 1, 1, 1)
-        title_color = (0, 0, 0, 1)
-        subtitle_color = (0, 0, 0, 1)
+        # CSVファイルから背景画像のリンクを取得
+        image_link = self.get_image_link_from_csv("MAINSYS/CSV/selected_backgrounds.csv")
+        if image_link:
+            self.set_background_image(image_link)
 
-        with open(csv_file, "r", encoding="UTF-8") as file:
+    def get_colors_from_csv(self, csv_file):
+        background_color = (1, 1, 1)  # デフォルトの背景色（白）
+        title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
+        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
+
+        with open(csv_file, "r") as file:
             reader = csv.reader(file)
-            next(reader)  # ヘッダー行をスキップ
+            next(reader)  # 1行目をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)
+                    background_color = (float(row[0]), float(row[1]), float(row[2]))
                     if len(row) > 5:
-                        title_color = (float(row[3]), float(row[4]), float(row[5]), 1)
+                        title_color = (float(row[3]), float(row[4]), float(row[5]))
                     if len(row) > 8:
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]), 1)
+                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
                     break
                 except ValueError:
                     pass
         return background_color, title_color, subtitle_color
 
-    def update_background(self, instance, value):
-        self.background_rect.pos = instance.pos
-        self.background_rect.size = instance.size
+    def get_image_link_from_csv(self, csv_file):
+        if os.path.exists(csv_file):
+            with open(csv_file, "r") as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    return row[0]
+        return None
 
     def set_background_color(self, color):
-        self.background_color.rgba = color
+        self.background_color = color
+        self.root.canvas.before.clear()
+        with self.root.canvas.before:
+            Color(*color)
+            Rectangle(pos=self.root.pos, size=self.root.size)
 
     def set_text_color(self, title_color, subtitle_color):
         for child in self.root.children:
             if isinstance(child, Label):
                 child.color = title_color
 
+    def set_background_image(self, image_link):
+        self.image_link = image_link
+        self.root.canvas.before.clear()
+        with self.root.canvas.before:
+            Rectangle(source=image_link, pos=self.root.pos, size=self.root.size)
+
+    def update_background_size(self, instance, width, height):
+        self.background.size = (width, height)
+        if hasattr(self, 'image_link'):
+            self.set_background_image(self.image_link)
+
 if __name__ == "__main__":
-    main_app = MainApp()
-    main_app.run()
+    MainApp().run()

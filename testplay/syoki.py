@@ -1,10 +1,11 @@
+import csv
+import os
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.colorpicker import ColorPicker
-import csv
-import os
+from kivy.uix.image import Image
 from kivy.core.window import Window
 import japanize_kivy
 
@@ -65,6 +66,13 @@ class BackgroundChangerApp(App):
         background_color = self.background_color_picker.color
         text_color = self.text_color_picker.color
 
+        # CSVファイルに背景色を保存
+        self.save_colors_to_csv(background_color, text_color)
+
+        # 新しい背景画像を設定
+        self.set_background_image(background_color)
+
+    def save_colors_to_csv(self, background_color, text_color):
         # csvファイルの保存先ディレクトリ
         csv_dir = 'MAINSYS/CSV'
 
@@ -75,14 +83,7 @@ class BackgroundChangerApp(App):
         # csvファイルの保存パス
         csv_path = os.path.join(csv_dir, 'color_settings.csv')
 
-        self.save_colors_to_csv(csv_path, background_color, text_color)
-
-        # 新しい背景画像を設定
-        # バックグラウンド画像を含む場合に使用
-        pass
-
-    def save_colors_to_csv(self, csv_file, background_color, text_color):
-        with open(csv_file, 'w', newline='') as csvfile:
+        with open(csv_path, 'w', newline='') as csvfile:
             fieldnames = ['BackgroundRed', 'BackgroundGreen', 'BackgroundBlue', 'TextRed', 'TextGreen', 'TextBlue']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
@@ -94,6 +95,26 @@ class BackgroundChangerApp(App):
                 'TextGreen': text_color[1],
                 'TextBlue': text_color[2]
             })
+
+    def set_background_image(self, background_color):
+        # 背景画像を設定
+        csv_dir = 'MAINSYS/CSV'
+        csv_path = os.path.join(csv_dir, 'color_settings.csv')
+
+        with open(csv_path, 'r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            row = next(reader)  # 一番最初の行を読み取る
+            background_red = float(row['BackgroundRed'])
+            background_green = float(row['BackgroundGreen'])
+            background_blue = float(row['BackgroundBlue'])
+
+        # 背景色に基づいて背景画像を生成
+        background_image = Image(source='', keep_ratio=False, allow_stretch=True)
+        background_image.canvas.before.clear()
+        with background_image.canvas.before:
+            Color(background_red, background_green, background_blue, 1)
+            Rectangle(pos=background_image.pos, size=background_image.size)
+        self.root.add_widget(background_image)
 
 if __name__ == '__main__':
     BackgroundChangerApp().run()
