@@ -13,12 +13,12 @@ canvas = tk.Canvas(root, width=400, height=400)
 canvas.pack()
 
 # 背景画像の初期値
-selected_background = "testplay/font/haro.jpg"  # 初期の背景画像パス
+selected_background = "MAINSYS/FONT/haro.jpg"  # 初期の背景画像パス
 
 def change_background():
     global selected_background
     # ファイル選択ダイアログを表示して画像を選択
-    file_path = filedialog.askopenfilename(initialdir="testplay/font", filetypes=[("Image files", "*.jpg *.png")])
+    file_path = filedialog.askopenfilename(initialdir="MAINSYS/FONT", filetypes=[("Image files", "*.jpg *.png")])
     
     if file_path:
         selected_background = file_path
@@ -34,13 +34,16 @@ def update_background():
     canvas.background_photo = background_photo
 
 def save_to_csv(image_link):
-    csv_folder = "testplay/CSV"
+    csv_folder = "MAINSYS/CSV"
     os.makedirs(csv_folder, exist_ok=True)  # フォルダが存在しない場合、作成する
 
     csv_file = os.path.join(csv_folder, "selected_backgrounds.csv")
-    with open(csv_file, "a", newline="") as csvfile:
+
+    # CSVファイルが既に存在する場合は上書きモード "w" で開く
+    with open(csv_file, "w", newline="") as csvfile:
         csv_writer = csv.writer(csvfile)
-        csv_writer.writerow([image_link])
+        #csv_writer.writerow(["Image_Link"])  # 1行目にカラム名を書き込む
+        csv_writer.writerow([image_link])  # データを書き込む
 
 # ファイル選択ボタンを作成
 select_button = tk.Button(root, text="背景画像を選択", command=change_background)
