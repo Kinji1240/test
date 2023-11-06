@@ -1,21 +1,19 @@
-from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.app import App
 from kivy.lang import Builder
+from external_clock import ClockApp  # 外部アプリのインポート
+from external_weather import WeatherApp  # 天気アプリのインポート
 
-class MainApp(App):
+kv = '''
+BoxLayout:
+    orientation: 'horizontal'
+    ClockApp:
+    WeatherApp:
+'''
+
+class ExternalApp(App):
     def build(self):
-        # メインのレイアウト
-        layout = BoxLayout(orientation='horizontal')
-
-        # BlueDigitalClockAppを表示
-        blue_clock_app = Builder.load_file("blue_clock.kv")
-        layout.add_widget(blue_clock_app)
-
-        # RedDigitalClockAppを表示
-        red_clock_app = Builder.load_file("red_clock.kv")
-        layout.add_widget(red_clock_app)
-
-        return layout
+        return Builder.load_string(kv)
 
 if __name__ == '__main__':
-    MainApp().run()
+    ExternalApp().run()
