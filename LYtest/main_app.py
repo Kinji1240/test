@@ -4,6 +4,11 @@ from kivy.lang import Builder
 from external_clock import ClockApp  # 外部アプリのインポート
 from external_weather import WeatherApp  # 天気アプリのインポート
 
+from kivy.config import Config
+Config.set('graphics', 'width', '500')  # ウィンドウの幅
+Config.set('graphics', 'height', '500')  # ウィンドウの高さ
+
+
 kv = '''
 BoxLayout:
     orientation: 'horizontal'
