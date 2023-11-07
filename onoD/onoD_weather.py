@@ -26,4 +26,4 @@ def main():
     print("降水確率情報:", precipitation_data)
 
 if __name__ == '__main__':
-    main()
+    DataDisplayApp().run()

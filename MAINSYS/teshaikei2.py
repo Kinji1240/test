@@ -1,3 +1,4 @@
+import os
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -35,6 +36,8 @@ class DraggableButton(Button):
 
 class MainApp(App):
     background_color = ListProperty([1, 1, 1, 1])
+    title_color = ListProperty([0, 0, 0, 1])
+    subtitle_color = ListProperty([0, 0, 0, 1])
 
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
@@ -46,10 +49,11 @@ class MainApp(App):
             size_hint_y=None,
             height=50,
             halign="center",
+            color=self.title_color  # タイトルの色を設定
         )
 
         with layout.canvas.before:
-            Color(*self.background_color)
+            Color(*self.background_color)  # 背景色を設定
             self.background = Rectangle(pos=layout.pos, size=layout.size)
         
         button1 = DraggableButton(text="時間表示設定", size_hint=(None, None))
@@ -119,7 +123,7 @@ class MainApp(App):
     def load_button_positions(self):
         button_positions = []
         try:
-            with open("MAINSYS/CSV/button_positions.csv", "r", newline="") as file:
+            with open("test/test/MAINSYS/CSV/color_settings.csv", "r", newline="") as file:
                 reader = csv.reader(file)
                 for row in reader:
                     button_positions.append(row)
@@ -133,30 +137,36 @@ class MainApp(App):
                     child.center_y = float(y)
 
     def on_start(self):
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
-        self.set_background_color(background_color)
+        self.load_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
 
-        image_link = self.get_image_link_from_csv("MAINSYS/CSV/selected_backgrounds.csv")
-        if image_link:
-            self.set_background_image(image_link)
+    def load_colors_from_csv(self, csv_file):
+        background_color, title_color, subtitle_color = self.get_colors_from_csv(csv_file)
+        self.set_background_color(background_color)
+        self.set_text_colors(title_color, subtitle_color)
 
     def get_colors_from_csv(self, csv_file):
-        background_color = (1, 1, 1)
-        title_color = (0, 0, 0)
-        subtitle_color = (0, 0, 0)
+        background_color = [1, 1, 1, 1]
+        title_color = [0, 0, 0, 1]
+        subtitle_color = [0, 0, 0, 1]
 
         with open(csv_file, "r") as file:
             reader = csv.reader(file)
             for row in reader:
                 try:
-                    background_color = [float(val) for val in row]
+                    background_color = [float(val) for val in row[0:4]]
+                    title_color = [float(val) for val in row[4:8]]
+                    subtitle_color = [float(val) for val in row[8:12]]
                     break
                 except ValueError:
                     pass
-        return background_color
+        return background_color, title_color, subtitle_color
 
     def set_background_color(self, color):
         self.background_color = color
+
+    def set_text_colors(self, title_color, subtitle_color):
+        self.title_color = title_color
+        self.subtitle_color = subtitle_color
 
     def update_background_size(self, instance, width, height):
         self.background.size = (width, height)

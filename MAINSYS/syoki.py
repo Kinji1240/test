@@ -60,25 +60,25 @@ class MainApp(App):
 
     def on_start(self):
         # CSVファイルから背景色を取得
-        self.background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
+        self.background_color, title_color, subtitle_color = self.get_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
         self.set_background_color(self.background_color, Window.width, Window.height)
         self.set_text_color(title_color, subtitle_color)
 
     def get_colors_from_csv(self, csv_file):
-        background_color = (1, 1, 1)  # デフォルトの背景色（白）
-        title_color = (0, 0, 0)  # デフォルトのタイトル文字色（黒）
-        subtitle_color = (0, 0, 0)  # デフォルトのサブタイトル文字色（黒）
+        background_color = (0.5, 0.7, 1, 1)  # 背景色（RGBA値を使用）
+        title_color = (0.1, 0.2, 0.3, 1)  # タイトル文字色（RGBA値を使用）
+        subtitle_color = (0.3, 0.4, 0.5, 1)  # サブタイトル文字色（RGBA値を使用）
 
         with open(csv_file, "r") as file:
             reader = csv.reader(file)
             next(reader)  # ヘッダ行をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]))
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), float(row[3]))  # 背景色のRGBA値を設定
                     if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
-                        title_color = (float(row[3]), float(row[4]), float(row[5]))
+                        title_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # タイトル文字色のRGBA値を設定
                     if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
+                        subtitle_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # サブタイトル文字色のRGBA値を設定
                     break  # 最初の行の値を使用
                 except ValueError:
                     pass
@@ -93,7 +93,7 @@ class MainApp(App):
     def set_text_color(self, title_color, subtitle_color):
         # タイトルとサブタイトルの文字色を変更
         self.root.children[1].color = title_color  # タイトルの文字色を変更
-        self.root.children[2].color = title_color  # サブタイトルの文字色を変更
+        self.root.children[2].color = subtitle_color  # サブタイトルの文字色を変更
 
     def show_confirmation_popup(self, instance):
         # ポップアップウィンドウを作成
@@ -107,7 +107,7 @@ class MainApp(App):
         # いいえボタン
         no_button = Button(text='いいえ')
         no_button.bind(on_press=self.dismiss_popup)
-
+        
         content.add_widget(yes_button)
         content.add_widget(no_button)
 
@@ -116,11 +116,14 @@ class MainApp(App):
 
     def launch_haikeigazou(self, instance):
         # "haikeigazou.py" を実行
-        os.system("python MAINSYS/haikeigazou.py")
+        os.system("python test/MAINSYS/haikeigazou.py")
         self.popup.dismiss()
 
     def dismiss_popup(self, instance):
         self.popup.dismiss()
+        if instance.text == 'いいえ':
+            # "teshaikei.py" を実行
+            os.system("python test/MAINSYS/teshaikei.py")
 
 if __name__ == "__main__":
     MainApp().run()
