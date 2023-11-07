@@ -1,4 +1,5 @@
 import requests
+import csv
 
 def get_info():
     base_url = "https://www.jma.go.jp/bosai/forecast/data/forecast/"
@@ -11,6 +12,11 @@ def get_info():
 
     # 一週間の気温情報を取得
     temperature_data = res[0]['timeSeries'][2]['areas'][0]['temps']
+
+    # 一週間の気温情報を取得
+    testdata = res[0]['timeSeries'][2]['areas'][0]['temps']
+    print(testdata)
+
 
     # 一週間の降水確率情報を取得
     precipitation_data = res[0]['timeSeries'][1]['areas'][0]['pops']
@@ -25,5 +31,12 @@ def main():
     print("気温情報:", temperature_data)
     print("降水確率情報:", precipitation_data)
 
+    # 新しいCSVファイルとして書き出す
+    file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_weather.csv'
+    with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(['天気情報', '気温情報', '降水確率情報'])
+        writer.writerows(zip(weather_data, temperature_data, precipitation_data))
+
 if __name__ == '__main__':
-    DataDisplayApp().run()
+    main()
