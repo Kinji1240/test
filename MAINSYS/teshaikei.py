@@ -1,4 +1,3 @@
-import os
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -8,6 +7,8 @@ from kivy.config import Config
 from kivy.core.window import Window
 import csv
 import japanize_kivy
+from kivy.properties import ListProperty
+from kivy.uix.relativelayout import RelativeLayout
 
 Config.set('graphics', 'width', 1920)
 Config.set('graphics', 'height', 1080)
@@ -33,6 +34,8 @@ class DraggableButton(Button):
         return super(DraggableButton, self).on_touch_move(touch)
 
 class MainApp(App):
+    background_color = ListProperty([1, 1, 1, 1])
+
     def build(self):
         layout = GridLayout(cols=1, spacing=10, padding=10)
         self.layout = layout
@@ -46,7 +49,8 @@ class MainApp(App):
         )
 
         with layout.canvas.before:
-            self.background = Rectangle(source='background.jpg', pos=layout.pos, size=layout.size)
+            Color(*self.background_color)
+            self.background = Rectangle(pos=layout.pos, size=layout.size)
         
         button1 = DraggableButton(text="時間表示設定", size_hint=(None, None))
         button1.bind(on_press=self.launch_main2)
@@ -83,20 +87,24 @@ class MainApp(App):
         return layout
 
     def launch_main2(self, instance):
-        os.system("python button_clock.py")
+        # この部分は適切なコードで置き換えてください
+        pass
 
     def launch_main3(self, instance):
-        os.system("python weather2.py")
-        os.system("python weathersearch.py")
+        # この部分は適切なコードで置き換えてください
+        pass
 
     def launch_main4(self, instance):
-        os.system("python Calendar.py")
+        # この部分は適切なコードで置き換えてください
+        pass
 
     def launch_main5(self, instance):
-        os.system("python haikei.py")
+        # この部分は適切なコードで置き換えてください
+        pass
 
     def launch_main6(self, instance):
-        os.system("kakuninn.py")
+        # この部分は適切なコードで置き換えてください
+        pass
 
     def save_button_positions(self, instance):
         button_positions = []
@@ -104,7 +112,7 @@ class MainApp(App):
             if isinstance(child, DraggableButton):
                 button_positions.append([child.text, child.center_x, child.center_y])
 
-        with open("MAINSYS/CSV/button_positions.csv", "w", newline="") as file:
+        with open("test/MAINSYS/CSV/dbutton_positions.csv", "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerows(button_positions)
 
@@ -127,7 +135,6 @@ class MainApp(App):
     def on_start(self):
         background_color, title_color, subtitle_color = self.get_colors_from_csv("MAINSYS/CSV/color_settings.csv")
         self.set_background_color(background_color)
-        self.set_text_color(title_color, subtitle_color)
 
         image_link = self.get_image_link_from_csv("MAINSYS/CSV/selected_backgrounds.csv")
         if image_link:
@@ -140,49 +147,19 @@ class MainApp(App):
 
         with open(csv_file, "r") as file:
             reader = csv.reader(file)
-            next(reader)
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]))
-                    if len(row) > 5:
-                        title_color = (float(row[3]), float(row[4]), float(row[5]))
-                    if len(row) > 8:
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]))
+                    background_color = [float(val) for val in row]
                     break
                 except ValueError:
                     pass
-        return background_color, title_color, subtitle_color
-
-    def get_image_link_from_csv(self, csv_file):
-        if os.path.exists(csv_file):
-            with open(csv_file, "r") as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    return row[0]
-        return None
+        return background_color
 
     def set_background_color(self, color):
         self.background_color = color
-        self.root.canvas.before.clear()
-        with self.root.canvas.before:
-            Color(*color)
-            Rectangle(pos=self.root.pos, size=self.root.size)
-
-    def set_text_color(self, title_color, subtitle_color):
-        for child in self.layout.children:
-            if isinstance(child, Label):
-                child.color = title_color
-
-    def set_background_image(self, image_link):
-        self.image_link = image_link
-        self.root.canvas.before.clear()
-        with self.root.canvas.before:
-            Rectangle(source=image_link, pos=self.root.pos, size=self.root.size)
 
     def update_background_size(self, instance, width, height):
         self.background.size = (width, height)
-        if hasattr(self, 'image_link'):
-            self.set_background_image(self.image_link)
 
 if __name__ == "__main__":
     MainApp().run()

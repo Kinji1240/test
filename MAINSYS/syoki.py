@@ -60,7 +60,7 @@ class MainApp(App):
 
     def on_start(self):
         # CSVファイルから背景色を取得
-        self.background_color, title_color, subtitle_color = self.get_colors_from_csv("test\MAINSYS\CSV\color_settings.csv")
+        self.background_color, title_color, subtitle_color = self.get_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
         self.set_background_color(self.background_color, Window.width, Window.height)
         self.set_text_color(title_color, subtitle_color)
 
@@ -74,11 +74,11 @@ class MainApp(App):
             next(reader)  # ヘッダ行をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)  # RGBA値を設定
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), float(row[3]))  # 背景色のRGBA値を設定
                     if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
-                        title_color = (float(row[3]), float(row[4]), float(row[5]), 1)  # RGBA値を設定
+                        title_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # タイトル文字色のRGBA値を設定
                     if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]), 1)  # RGBA値を設定
+                        subtitle_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # サブタイトル文字色のRGBA値を設定
                     break  # 最初の行の値を使用
                 except ValueError:
                     pass
@@ -93,7 +93,7 @@ class MainApp(App):
     def set_text_color(self, title_color, subtitle_color):
         # タイトルとサブタイトルの文字色を変更
         self.root.children[1].color = title_color  # タイトルの文字色を変更
-        self.root.children[2].color = title_color  # サブタイトルの文字色を変更
+        self.root.children[2].color = subtitle_color  # サブタイトルの文字色を変更
 
     def show_confirmation_popup(self, instance):
         # ポップアップウィンドウを作成
