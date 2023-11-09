@@ -45,7 +45,7 @@ class ImageButtonApp(App):
         file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
         
         # 既存のCSVファイルを読み込む
-        with open(file_path, mode='r', encoding='utf-8') as file:
+        with open(file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
         
