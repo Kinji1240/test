@@ -42,7 +42,7 @@ class DataDisplayApp(App):
         file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_wth_cord.csv'
 
         # CSVファイルを読み込む
-        with open(file_path, mode='r',encoding='utf-8') as file:
+        with open(file_path, mode='r', encoding='utf-8') as file:
             reader = csv.reader(file)
             data = list(reader)
         # opt_tihouの値でonoD_wth_cord.csvを探す
@@ -62,6 +62,7 @@ class DataDisplayApp(App):
         
         # 必要な部分を変更
         data[2][1] = opt_weather_cord  # watchを文字列に変換して代入
+        data[3][1] = str(selected_prefecture)
         
         # 新しいCSVファイルとして書き出す
         with open(file_path, mode='w', newline='') as file:
