@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.graphics import Rectangle, Color
+from kivy.core.audio import SoundLoader
 import japanize_kivy
 
 class ErrorApp(App):
@@ -27,6 +28,9 @@ class ErrorApp(App):
             # 初回描画
             self.update_canvas(layout, layout.size)
 
+            self.sound = SoundLoader.load(r'C:\Users\204012\Desktop\test_git\test\onoD\六甲おろし.mp3')  # ここに音楽ファイルのパスを指定
+            self.play_music()  # アプリ起動時に自動で音楽を再生
+
             return layout
         else:
             # エラーが発生しなかった場合の処理
@@ -36,13 +40,18 @@ class ErrorApp(App):
         # 画面全体を縦向きのトラ柄に描画
         with layout.canvas.before:
             layout.canvas.before.clear()
-            stripe_width = 60
+            stripe_width = 100
             for i in range(0, int(size[0]), stripe_width):
                 Color(1, 1, 0, 1)  # 黄色の背景
                 Rectangle(pos=(layout.x + i, layout.y), size=(stripe_width, size[1]))
 
                 Color(0, 0, 0, 1)  # 黒い縞模様
                 Rectangle(pos=(layout.x + i, layout.y), size=(stripe_width / 2, size[1]))
+
+    def play_music(self, *args):
+        if self.sound:
+            self.sound.play()
+            self.sound.bind(on_stop=self.play_music)  # 音楽が停止したら再度再生
 
 if __name__ == '__main__':
     ErrorApp().run()
