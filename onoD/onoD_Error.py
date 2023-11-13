@@ -36,7 +36,7 @@ class ErrorApp(App):
         # 画面全体を縦向きのトラ柄に描画
         with layout.canvas.before:
             layout.canvas.before.clear()
-            stripe_width = 40
+            stripe_width = 60
             for i in range(0, int(size[0]), stripe_width):
                 Color(1, 1, 0, 1)  # 黄色の背景
                 Rectangle(pos=(layout.x + i, layout.y), size=(stripe_width, size[1]))
