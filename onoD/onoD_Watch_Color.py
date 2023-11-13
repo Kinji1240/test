@@ -45,6 +45,7 @@ class TimeDisplayApp(App):
 
     def change_color(self, color):
         self.time_label.color = color
+
     
     def confirm_action(self, color):
         print("確定ボタンが押されました。")
@@ -55,7 +56,9 @@ class TimeDisplayApp(App):
         with open(file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
-            
+        
+        
+        
         # 必要な部分を変更
         data[5][1] = str(color)  # watchを文字列に変換して代入
         
