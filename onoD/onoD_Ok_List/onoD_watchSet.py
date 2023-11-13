@@ -12,18 +12,19 @@ class ImageButtonApp(App):
 
         # 画像ボタンを作成
         image_path = r'C:\Users\204012\Desktop\image\click.jpg'
-        image_button = Button(background_normal=image_path, background_down=image_path, size_hint=(None, None), width=500, height=500)
-        image_button.bind(on_press=self.on_button_press)
+        image_fst_button = Button(background_normal=image_path, background_down=image_path, size_hint=(None, None), width=500, height=500)
+        image_fst_button.bind(on_press=self.on_button_press)
         
-        # 2つ目のボタンを作成
-        second_button = Button(text='2つ目のボタン', size_hint=(None, None), width=500, height=500)
-        second_button.bind(on_press=self.on_second_button_press)
+        # 画像ボタンを作成
+        image_path = r'C:\Users\204012\Desktop\image\click.jpg'
+        image_sec_button = Button(background_normal=image_path, background_down=image_path, size_hint=(None, None), width=500, height=500)
+        image_sec_button.bind(on_press=self.on_button_press)
 
         # レイアウトを作成し、ボタンを追加
         layout = BoxLayout(orientation='horizontal', padding=10, spacing=10)
         layout.add_widget(title_label)
-        layout.add_widget(image_button)
-        layout.add_widget(second_button)
+        layout.add_widget(image_fst_button)
+        layout.add_widget(image_sec_button)
         
         return layout
 
@@ -32,7 +33,7 @@ class ImageButtonApp(App):
         print('1つ目のボタンが押されました！')
         watch = 1
         self.update_csv(watch)
-        
+
     def on_second_button_press(self, instance):
         print('2つ目のボタンが押されました！')
         watch = 2
@@ -46,7 +47,7 @@ class ImageButtonApp(App):
         with open(file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
-        
+            
         # 必要な部分を変更
         data[1][1] = str(watch)  # watchを文字列に変換して代入
         

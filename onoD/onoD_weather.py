@@ -1,10 +1,23 @@
 import requests
 import csv
 
-def get_info():
+def r_opt_csv():
+    # ファイルの読み込みと書き込みはここで行います
+    file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
+        
+    # 既存のCSVファイルを読み込む
+    with open(file_path, mode='r',encoding='utf-8') as file:
+        reader = csv.reader(file)
+        data = list(reader)
+        
+    # 必要な部分を変更
+    csvdata = data[2][1]
+
+    return csvdata
+
+def get_info(code):
     base_url = "https://www.jma.go.jp/bosai/forecast/data/forecast/"
-    area_code = "270000"  # 大阪府のエリアコード
-    url = f"{base_url}{area_code}.json"
+    url = f"{base_url}{code}.json"
     res = requests.get(url).json()
 
     # 一週間の天気情報を取得
@@ -24,7 +37,9 @@ def get_info():
     return weather_data, temperature_data, precipitation_data
 
 def main():
-    weather_data, temperature_data, precipitation_data = get_info()
+    areaCode = r_opt_csv()
+
+    weather_data, temperature_data, precipitation_data = get_info(code=areaCode)
 
     # 結果の出力
     print("天気情報:", weather_data)
