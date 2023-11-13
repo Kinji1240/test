@@ -4,8 +4,9 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.clock import Clock
 import time
-
+import japanize_kivy
 import csv
+import os
 
 class TimeDisplayApp(App):
     def build(self):
@@ -49,7 +50,7 @@ class TimeDisplayApp(App):
     def confirm_action(self, color):
         print("確定ボタンが押されました。")
          # ファイルの読み込みと書き込みはここで行います
-        file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
+        file_path = r'C:\Users\204061\Desktop\GIT\test\HoT\HoT_TOGO.csv'
         
         # 既存のCSVファイルを読み込む
         with open(file_path, mode='r') as file:
@@ -57,7 +58,7 @@ class TimeDisplayApp(App):
             data = list(reader)
             
         # 必要な部分を変更
-        data[5][1] = str(color)  # watchを文字列に変換して代入
+        data[0][0] = str(color)  # watchを文字列に変換して代入
         
         # 新しいCSVファイルに書き出す
         with open(file_path, mode='w', newline='') as file:
@@ -67,6 +68,7 @@ class TimeDisplayApp(App):
     
     def back_action(self, instance):
         print("戻るボタンが押されました。")
+        os.system(r'C:\Users\204061\Desktop\GIT\test\HoT\HoT_clock.py')
 
 if __name__ == '__main__':
     TimeDisplayApp().run()
