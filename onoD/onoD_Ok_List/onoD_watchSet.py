@@ -2,8 +2,8 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-import japanize_kivy
 import csv
+import japanize_kivy
 
 class ImageButtonApp(App):
     def build(self):
@@ -34,7 +34,7 @@ class ImageButtonApp(App):
         print('1つ目のボタンが押されました！')
         watch = 1
         self.update_csv(watch)
-        
+
     def on_second_button_press(self, instance):
         print('2つ目のボタンが押されました！')
         watch = 2
@@ -48,7 +48,7 @@ class ImageButtonApp(App):
         with open(file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
-        
+            
         # 必要な部分を変更
         data[1][1] = str(watch)  # watchを文字列に変換して代入
         
