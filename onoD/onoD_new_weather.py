@@ -60,19 +60,23 @@ class WeatherApp(App):
         self.weather_layout.clear_widgets()
         for day_data in weekly_data:
             day_layout = BoxLayout(orientation='vertical', spacing=5)
-            day_label = Label(text=day_data['day'])
-            max_temp_label = Label(text=f"最高気温: {day_data['max_temp']}°C")
-            min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C")
-            weather_label = Label(text=f"天気: {day_data['weather']}")
-
+            dLabel1 = Label()
+            title_label = Label(text="天候情報",font_size='25sp')
+            day_label = Label(text=day_data['day'],font_size='20sp')
+            max_temp_label = Label(text=f"最高気温: {day_data['max_temp']}°C",font_size='20sp')
+            min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C",font_size='20sp')
+            weather_label = Label(text=f"天気: {day_data['weather']}",font_size='20sp')
+            dLabel2 = Label()
             # 天気に対応する画像を表示
             weather_image = Image(source=get_weather_image(day_data['weather']))
-
+            day_layout.add_widget(title_label)
+            day_layout.add_widget(dLabel1)
             day_layout.add_widget(day_label)
             day_layout.add_widget(max_temp_label)
             day_layout.add_widget(min_temp_label)
             day_layout.add_widget(weather_label)
             day_layout.add_widget(weather_image)
+            day_layout.add_widget(dLabel2)
             self.weather_layout.add_widget(day_layout)
 
 def get_weather_meaning(weather_code):
