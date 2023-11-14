@@ -1,6 +1,7 @@
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
+from kivy.uix.image import Image
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -13,22 +14,10 @@ class WeatherApp(App):
         self.data = None
 
         # ルート レイアウトを作成
-        self.root_layout = BoxLayout(orientation='vertical', spacing=10, padding=[10, 50, 10, 10])  # padding を調整
-
-        # ボタン レイアウトを作成
-        button_layout = BoxLayout(size_hint_y=None, height='30dp', spacing=10)
-        self.root_layout.add_widget(button_layout)
-
-        # ボタンを作成し、ボタン レイアウトに追加
-        button_1day = Button(text='1日', size_hint=(None, None), width=60, height=30, on_press=lambda x: self.update_display(1))
-        button_3day = Button(text='3日', size_hint=(None, None), width=60, height=30, on_press=lambda x: self.update_display(3))
-        button_7day = Button(text='7日', size_hint=(None, None), width=60, height=30, on_press=lambda x: self.update_display(7))
-        button_layout.add_widget(button_1day)
-        button_layout.add_widget(button_3day)
-        button_layout.add_widget(button_7day)
+        self.root_layout = BoxLayout(orientation='vertical')
 
         # 天気情報のための BoxLayout を作成
-        self.weather_layout = BoxLayout(size_hint_y=None, height='160dp', spacing=5)
+        self.weather_layout = BoxLayout()
         self.root_layout.add_widget(self.weather_layout)
 
         # 初回のデータ取得と定期的な更新をスケジュール
@@ -37,14 +26,6 @@ class WeatherApp(App):
 
         return self.root_layout
 
-    def on_start(self):
-        # アプリケーションが起動したときにウィンドウの中央に配置する
-        Window.bind(on_resize=self.center_layout)
-        self.center_layout(Window.width, Window.height)
-
-    def center_layout(self, width, height):
-        # ウィンドウの中央に配置する
-        self.root_layout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
 
     def update_weather_data(self, dt=None):
         response = requests.get(self.api_url)
@@ -78,15 +59,20 @@ class WeatherApp(App):
         # 指定された日数分のデータをレイアウトに反映
         self.weather_layout.clear_widgets()
         for day_data in weekly_data:
-            day_layout = BoxLayout(orientation='vertical', size_hint_y=None, height=160, spacing=5)
-            day_label = Label(text=day_data['day'], size_hint_y=None, height='30dp')
-            max_temp_label = Label(text=f"最高気温: {day_data['max_temp']}°C", size_hint_y=None, height='30dp')
-            min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C", size_hint_y=None, height='30dp')
-            weather_label = Label(text=f"天気: {day_data['weather']}", size_hint_y=None, height='30dp')
+            day_layout = BoxLayout(orientation='vertical', spacing=5)
+            day_label = Label(text=day_data['day'])
+            max_temp_label = Label(text=f"最高気温: {day_data['max_temp']}°C")
+            min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C")
+            weather_label = Label(text=f"天気: {day_data['weather']}")
+
+            # 天気に対応する画像を表示
+            weather_image = Image(source=get_weather_image(day_data['weather']))
+
             day_layout.add_widget(day_label)
             day_layout.add_widget(max_temp_label)
             day_layout.add_widget(min_temp_label)
             day_layout.add_widget(weather_label)
+            day_layout.add_widget(weather_image)
             self.weather_layout.add_widget(day_layout)
 
 def get_weather_meaning(weather_code):
@@ -114,6 +100,15 @@ def get_weather_meaning(weather_code):
         return "80 - 99 にわか降水、または現在または直近の雷雨"
     else:
         return "不明"
+
+def get_weather_image(weather_meaning):
+    # 仮の実装: 天気に応じて異なる画像を返す
+    if '晴れ' in weather_meaning:
+        return 'test/onoD/sun.png'
+    elif '雨' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    else:
+        return 'unknown.png'
 
 if __name__ == '__main__':
     WeatherApp().run()

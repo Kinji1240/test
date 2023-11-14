@@ -3,7 +3,7 @@ import csv
 
 def r_opt_csv():
     # ファイルの読み込みと書き込みはここで行います
-    file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
+    file_path = "test\onoD\onoD_csv_list\onoD_opt.csv"
         
     # 既存のCSVファイルを読み込む
     with open(file_path, mode='r',encoding='utf-8') as file:
@@ -47,7 +47,7 @@ def main():
     print("降水確率情報:", precipitation_data)
 
     # 新しいCSVファイルとして書き出す
-    file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_weather.csv'
+    file_path = "test\onoD\onoD_csv_list\onoD_weather.csv"
     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(['天気情報', '気温情報', '降水確率情報'])
