@@ -20,12 +20,12 @@ class WeatherApp(App):
         
         # 必要な部分を変更
         url_data = data[2][1] 
-        
+
         # 新しいCSVファイルとして書き出す
         with open(file_path, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(data)
-        
+
         return url_data
 
     def build(self):
@@ -46,7 +46,6 @@ class WeatherApp(App):
         Clock.schedule_interval(lambda dt: self.update_weather_data(), 3600)  # 1時間ごとに更新
 
         return self.root_layout
-
 
     def update_weather_data(self, dt=None):
         response = requests.get(self.api_url)
