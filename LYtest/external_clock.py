@@ -1,3 +1,4 @@
+from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Rectangle
 from kivy.clock import Clock
@@ -13,6 +14,9 @@ class ClockApp(BoxLayout):
         self.orientation = 'horizontal'
         self.opacity = 1
 
+        # ClockAppの初期化時にClock.schedule_intervalを呼び出す
+        Clock.schedule_interval(self.update_time, 1)
+
     def on_size(self, instance, value):
         self.rect = Rectangle(pos=self.pos, size=self.size)
         self.canvas.before.clear()
@@ -27,10 +31,9 @@ class ClockApp(BoxLayout):
         self.label.text = time_str
 
 
-if __name__ == '__main__':
-    from kivy.base import runTouchApp
+class ClockAppApp(App):
+    def build(self):
+        return ClockApp(size_hint=(1, 1), pos_hint={'x': 0, 'y': 0})
 
-    layout = FloatLayout()
-    clock_app = ClockApp(size_hint=(1, 1), pos_hint={'x': 0, 'y': 0})
-    layout.add_widget(clock_app)
-    runTouchApp(layout)
+if __name__ == '__main__':
+    ClockAppApp().run()
