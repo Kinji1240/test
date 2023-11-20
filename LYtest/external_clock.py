@@ -23,13 +23,13 @@ class ClockApp(BoxLayout):
         with self.canvas.before:
             Color(0, 0, 1, 1)
             if self.rect:
+                self.rect.pos = (self.center_x - self.rect.size[0] / 2, self.center_y - self.rect.size[1] / 2)
                 self.canvas.before.add(self.rect)
 
     def update_time(self, dt):
         now = datetime.now()
         time_str = now.strftime("%H:%M:%S")
         self.label.text = time_str
-
 
 class ClockAppApp(App):
     def build(self):
