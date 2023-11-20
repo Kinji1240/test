@@ -1,11 +1,10 @@
-from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Rectangle
 from kivy.clock import Clock
 from datetime import datetime
 from kivy.config import Config
-
-Config.set('graphics', 'resizable', 1)
+from kivy.uix.label import Label
+from kivy.uix.floatlayout import FloatLayout
 
 class ClockApp(BoxLayout):
     label = None
@@ -31,3 +30,12 @@ class ClockApp(BoxLayout):
         now = datetime.now()
         time_str = now.strftime("%H:%M:%S")
         self.label.text = time_str
+
+
+if __name__ == '__main__':
+    from kivy.base import runTouchApp
+
+    layout = FloatLayout()
+    clock_app = ClockApp(size_hint=(1, 1), pos_hint={'x': 0, 'y': 0})
+    layout.add_widget(clock_app)
+    runTouchApp(layout)
