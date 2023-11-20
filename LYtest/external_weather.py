@@ -18,10 +18,9 @@ class WeatherApp(Label):
     def on_size(self, instance, value):
         self.rect = Rectangle(pos=self.pos, size=self.size)
         self.canvas.before.clear()
-        with self.canvas.before:
-            Color(1, 0, 0, 1)
-            if self.rect:
-                # 中央寄せに修正
+        if self.rect:
+            with self.canvas.before:
+                Color(1, 0, 0, 1)
                 self.rect.pos = (self.center_x - self.rect.size[0] / 2, self.center_y - self.rect.size[1] / 2)
                 self.canvas.before.add(self.rect)
 
