@@ -8,6 +8,7 @@ from kivy.core.window import Window
 import requests
 import japanize_kivy
 import csv
+import os
 
 class WeatherApp(App):
     def load_csv(self):
@@ -128,11 +129,29 @@ def get_weather_meaning(weather_code):
 def get_weather_image(weather_meaning):
     # 仮の実装: 天気に応じて異なる画像を返す
     if '晴れ' in weather_meaning:
-        return 'test/onoD/sun.png'
+        return 'test/onoD/sun.png' #実施環境用にパスを変更してください
     elif '雨' in weather_meaning:
         return 'test/onoD/umbrella.png'
+    elif '霞、ほこり、砂または煙' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif '降水、霧、氷霧、または雷雨' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif '塵嵐、砂嵐' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif '吹雪または吹雪' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif '霧または氷' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif '霧または氷霧' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif '霧雨' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif 'にわか降水（シャワーではない）' in weather_meaning:
+        return 'test/onoD/umbrella.png'
+    elif 'にわか降水、または現在または直近の雷雨' in weather_meaning:
+        return 'test/onoD/umbrella.png'
     else:
-        return 'unknown.png'
+        return 'test/onoD/umbrella.png'
 
 if __name__ == '__main__':
     WeatherApp().run()
