@@ -27,7 +27,7 @@ class LongPressButton(Button):
         print("長押しされました")
         os.system("python onoD_main.py")
 
-    def on_short_press(self):
+    def on_short_press(self): 
         print("普通にタッチされました")
 
 class LongPressApp(App):
