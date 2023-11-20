@@ -1,41 +1,51 @@
 from kivy.app import App
 from kivy.uix.checkbox import CheckBox
+from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivy.lang import Builder
+from kivy.graphics import Color, Rectangle
+from kivy.clock import Clock
+from kivy.config import Config
 from external_clock import ClockApp
 from external_weather import WeatherApp
+from kivy.lang import Builder
 
-from kivy.config import Config
-Config.set('graphics', 'width', '500')  # ウィンドウの幅
-Config.set('graphics', 'height', '500')  # ウィンドウの高さ
-
-# ClockApp、WeatherAppのクラスをFactoryに登録
 from kivy.factory import Factory
+
 Factory.register('ClockApp', cls=ClockApp)
 Factory.register('WeatherApp', cls=WeatherApp)
 
+Config.set('graphics', 'width', '500')
+Config.set('graphics', 'height', '500')
+
 kv = '''
-BoxLayout:
-    orientation: 'vertical'
+FloatLayout:
     
     CheckBox:
         id: clock_checkbox
         text: 'Show Clock'
         size_hint: None, None
         size: 150, 50
-        color: 0, 0, 0, 1  # 黒色に設定
+        color: 1, 0, 0, 1
         on_active: app.toggle_feature('ClockApp', self.active)
+            
+    Label:
+        text: 'Show Clock'
+        color: 1, 0, 0, 1
+        size_hint: None, None
+        size: 150, 50
 
     CheckBox:
         id: weather_checkbox
-        text: 'Show Weather'
         size_hint: None, None
         size: 150, 50
-        color: 0, 0, 0, 1  # 黒色に設定
-        on_active: 
-            print("Weather CheckBox Active:", self.active)
-            app.toggle_feature('WeatherApp', self.active)
+        on_active: app.toggle_feature('WeatherApp', self.active)
+            
+    Label:
+        text: 'Show Weather'
+        color: 1, 0, 0, 1
+        size_hint: None, None
+        size: 150, 50
 
     ClockApp:
         id: clock_app
@@ -54,9 +64,12 @@ class ExternalApp(App):
 
     def toggle_feature(self, feature_name, active):
         print("Toggling Feature:", feature_name, "Active:", active)
-        # ClockAppとWeatherAppを表示/非表示に切り替える
-        feature = self.root.ids[feature_name.lower() + "_app"]
-        feature.opacity = 1 if active else 0
+        feature_id = feature_name.lower() + "_app"
+        if feature_id in self.root.ids:
+            feature = self.root.ids[feature_id]
+            feature.opacity = 1 if active else 0
+        else:
+            print(f"Error: {feature_id} not found in root.ids")
 
 if __name__ == '__main__':
     ExternalApp().run()
