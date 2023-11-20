@@ -1,4 +1,4 @@
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
 from kivy.lang import Builder
 from external_clock import ClockApp  # 外部アプリのインポート
@@ -8,12 +8,14 @@ from kivy.config import Config
 Config.set('graphics', 'width', '500')  # ウィンドウの幅
 Config.set('graphics', 'height', '500')  # ウィンドウの高さ
 
-
 kv = '''
-BoxLayout:
-    orientation: 'horizontal'
+FloatLayout:
     ClockApp:
+        size_hint: 0.5, 1
+        pos_hint: {'x': 0, 'y': 0}
     WeatherApp:
+        size_hint: 0.5, 1
+        pos_hint: {'x': 0.5, 'y': 0}
 '''
 
 class ExternalApp(App):
