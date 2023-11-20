@@ -82,7 +82,6 @@ class WeatherApp(App):
         for day_data in weekly_data:
             day_layout = BoxLayout(orientation='vertical', spacing=5)
             dLabel1 = Label()
-            title_label = Label(text="天候情報",font_size='25sp', font_name='test\GTfont\Mystic Soul.ttf', color=(1, 0, 0, 1))
             day_label = Label(text=day_data['day'],font_size='20sp')
             max_temp_label = Label(text=f"最高気温: {day_data['max_temp']}°C",font_size='20sp')
             min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C",font_size='20sp')
@@ -90,7 +89,6 @@ class WeatherApp(App):
             dLabel2 = Label()
             # 天気に対応する画像を表示
             weather_image = Image(source=get_weather_image(day_data['weather']))
-            day_layout.add_widget(title_label)
             day_layout.add_widget(dLabel1)
             day_layout.add_widget(day_label)
             day_layout.add_widget(max_temp_label)
