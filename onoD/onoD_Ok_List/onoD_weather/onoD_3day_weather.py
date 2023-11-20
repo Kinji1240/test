@@ -89,7 +89,6 @@ class WeatherApp(App):
             dLabel2 = Label()
             # 天気に対応する画像を表示
             weather_image = Image(source=get_weather_image(day_data['weather']))
-            day_layout.add_widget(title_label)
             day_layout.add_widget(dLabel1)
             day_layout.add_widget(day_label)
             day_layout.add_widget(max_temp_label)
