@@ -1,16 +1,20 @@
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
+from kivy.uix.boxlayout import BoxLayout
+from kivy.graphics import Color, Rectangle
 from kivy.clock import Clock
 from datetime import datetime
-from kivy.graphics import Color, Rectangle  # ColorとRectangleをインポート
 from kivy.config import Config
 
+Config.set('graphics', 'resizable', 1)
+
 class ClockApp(BoxLayout):
+    label = None
+
     def __init__(self, **kwargs):
         super(ClockApp, self).__init__(**kwargs)
         self.orientation = 'horizontal'
-        self.label = Label(text='', font_size=50, halign='center')
+        if self.label is None:
+            self.label = Label(text='', font_size=50, halign='center')
         self.add_widget(self.label)
         Clock.schedule_interval(self.update_time, 1)
         self.rect = None
@@ -27,6 +31,3 @@ class ClockApp(BoxLayout):
         now = datetime.now()
         time_str = now.strftime("%H:%M:%S")
         self.label.text = time_str
-
-# ウィンドウサイズ変更を設定
-Config.set('graphics', 'resizable', 1)
