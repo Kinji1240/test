@@ -7,9 +7,30 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 import requests
 import japanize_kivy
+import csv
 
 class WeatherApp(App):
+    def load_csv(self):
+
+        file_path = "test\onoD\onoD_csv_list\onoD_opt.csv"
+        # CSVファイルを読み込む
+        with open(file_path, mode='r') as file:
+            reader = csv.reader(file)
+            data = list(reader)
+        
+        # 必要な部分を変更
+        url_data = data[2][1] 
+
+        # 新しいCSVファイルとして書き出す
+        with open(file_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
+
+        return url_data
+
     def build(self):
+        #url_data = self.load_csv()
+        #self.api_url = url_data
         self.api_url = "https://api.open-meteo.com/v1/forecast?latitude=34.7&longitude=135.5&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FTokyo"
         self.data = None
 
@@ -25,7 +46,6 @@ class WeatherApp(App):
         Clock.schedule_interval(lambda dt: self.update_weather_data(), 3600)  # 1時間ごとに更新
 
         return self.root_layout
-
 
     def update_weather_data(self, dt=None):
         response = requests.get(self.api_url)
@@ -61,7 +81,7 @@ class WeatherApp(App):
         for day_data in weekly_data:
             day_layout = BoxLayout(orientation='vertical', spacing=5)
             dLabel1 = Label()
-            title_label = Label(text="天候情報",font_size='25sp')
+            title_label = Label(text="天候情報",font_size='25sp', font_name='test\GTfont\Mystic Soul.ttf', color=(1, 0, 0, 1))
             day_label = Label(text=day_data['day'],font_size='20sp')
             max_temp_label = Label(text=f"最高気温: {day_data['max_temp']}°C",font_size='20sp')
             min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C",font_size='20sp')
