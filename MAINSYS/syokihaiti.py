@@ -63,8 +63,12 @@ class MainApp(App):
         layout.add_widget(button4)
         layout.add_widget(button5)
 
+        # 背景色のRGBA値をCSVから読み込み
+        background_color, _, _ = self.get_colors_from_csv("test\MAINSYS\CSV\color_settings.csv")
+
+        # 背景の色を設定
         with layout.canvas.before:
-            self.background_color = Color(0, 1, 0, 1)  # 青色 (RGBA)
+            self.background_color = Color(*background_color)  # 背景色をRGBAで設定
             self.background_rect = Rectangle(pos=layout.pos, size=layout.size)
 
         layout.bind(pos=self.update_background, size=self.update_background)
@@ -88,26 +92,26 @@ class MainApp(App):
         os.system("kakuninn.py")
 
     def on_start(self):
-        background_color, title_color, subtitle_color = self.get_colors_from_csv("test/MAINSYS/CSV/color_settings.csv")
+        background_color, title_color, subtitle_color = self.get_colors_from_csv("test\MAINSYS\CSV\color_settings.csv")
         self.set_background_color(background_color)
         self.set_text_color(title_color, subtitle_color)
 
     def get_colors_from_csv(self, csv_file):
-        background_color = (0, 1, 0, 1)  # 青色 (RGBA)
-        title_color = (0, 0, 0, 1)
-        subtitle_color = (0, 0, 0, 1)
+        background_color = (0.5, 0.7, 1, 1)  # 背景色（RGBA値を使用）
+        title_color = (0.1, 0.2, 0.3, 1)  # タイトル文字色（RGBA値を使用）
+        subtitle_color = (0.3, 0.4, 0.5, 1)  # サブタイトル文字色（RGBA値を使用）
 
-        with open(csv_file, "r", encoding="utf-8") as file:
+        with open(csv_file, "r") as file:
             reader = csv.reader(file)
-            next(reader)  # ヘッダー行をスキップ
+            next(reader)  # ヘッダ行をスキップ
             for row in reader:
                 try:
-                    background_color = (float(row[0]), float(row[1]), float(row[2]), 1)  # RGBA
-                    if len(row) > 5:
-                        title_color = (float(row[3]), float(row[4]), float(row[5]), 1)
-                    if len(row) > 8:
-                        subtitle_color = (float(row[6]), float(row[7]), float(row[8]), 1)
-                    break
+                    background_color = (float(row[0]), float(row[1]), float(row[2]), float(row[3]))  # 背景色のRGBA値を設定
+                    if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
+                        title_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # タイトル文字色のRGBA値を設定
+                    if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
+                        subtitle_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # サブタイトル文字色のRGBA値を設定
+                    break  # 最初の行の値を使用
                 except ValueError:
                     pass
         return background_color, title_color, subtitle_color

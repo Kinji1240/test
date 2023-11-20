@@ -115,7 +115,7 @@ class MainApp(App):
 
     def launch_haikeigazou(self, instance):
         # "haikeigazou.py" を実行
-        os.system("python MAINSYS/haikeigazou.py")
+        os.system("python test\MAINSYS\haikeigazou.py")
         self.popup.dismiss()
 
     def dismiss_popup(self, instance):
