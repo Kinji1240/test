@@ -42,7 +42,7 @@ class MainApp(App):
         center_layout = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height=50)
         center_layout.add_widget(Label())  # 左側の余白
         center_layout.add_widget(button)
-        center_layout.add_widget(Label())  # 右側の余白
+        center_layout .add_widget(Label())  # 右側の余白
         layout.add_widget(center_layout)
 
         # ウィンドウサイズ変更時に背景の大きさを調整
@@ -67,7 +67,6 @@ class MainApp(App):
     def get_colors_from_csv(self, csv_file):
         background_color = (0.5, 0.7, 1, 1)  # 背景色（RGBA値を使用）
         title_color = (0.1, 0.2, 0.3, 1)  # タイトル文字色（RGBA値を使用）
-        subtitle_color = (0.3, 0.4, 0.5, 1)  # サブタイトル文字色（RGBA値を使用）
 
         with open(csv_file, "r") as file:
             reader = csv.reader(file)
@@ -75,25 +74,25 @@ class MainApp(App):
             for row in reader:
                 try:
                     background_color = (float(row[0]), float(row[1]), float(row[2]), float(row[3]))  # 背景色のRGBA値を設定
-                    if len(row) > 5:  # CSVファイルにタイトルとサブタイトルの色情報が含まれているか確認
-                        title_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # タイトル文字色のRGBA値を設定
+                    title_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # タイトル文字色のRGBA値を設定
                     if len(row) > 8:  # CSVファイルにサブタイトルの色情報が含まれているか確認
                         subtitle_color = (float(row[4]), float(row[5]), float(row[6]), float(row[7]))  # サブタイトル文字色のRGBA値を設定
                     break  # 最初の行の値を使用
                 except ValueError:
                     pass
-        return background_color, title_color, subtitle_color
+        return background_color, title_color, title_color  # subtitle_color の代入も title_color と同じにする
 
     def set_background_color(self, color, width, height):
         self.root.canvas.before.clear()  # 既存の背景をクリア
         with self.root.canvas.before:
             Color(*color)
-            Rectangle(pos=self.root.pos, size=(width, height))
+            Rectangle(pos=(self.root.x, self.root.y), size=(width, height))
+
 
     def set_text_color(self, title_color, subtitle_color):
         # タイトルとサブタイトルの文字色を変更
         self.root.children[1].color = title_color  # タイトルの文字色を変更
-        self.root.children[2].color = subtitle_color  # サブタイトルの文字色を変更
+        # サブタイトルの文字色の設定を削除
 
     def show_confirmation_popup(self, instance):
         # ポップアップウィンドウを作成
@@ -123,7 +122,7 @@ class MainApp(App):
         self.popup.dismiss()
         if instance.text == 'いいえ':
             # "teshaikei.py" を実行
-            os.system("python test/MAINSYS/teshaikei.py")
+            os.system("python MAINSYS/GTtestmain.py")
 
 if __name__ == "__main__":
     MainApp().run()
