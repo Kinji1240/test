@@ -5,9 +5,13 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.uix.behaviors import DragBehavior
 import requests
 import japanize_kivy
 import csv
+
+class DraggableBoxLayout(DragBehavior, BoxLayout):
+    pass
 
 class WeatherApp(App):
     def load_csv(self):
@@ -28,7 +32,7 @@ class WeatherApp(App):
         self.data = None
 
         # ルート レイアウトを作成
-        self.root_layout = BoxLayout(orientation='horizontal')  # orientationをhorizontalに変更
+        self.root_layout = DraggableBoxLayout(orientation='horizontal')  # orientationをhorizontalに変更
 
         # 天気情報のための BoxLayout を作成
         self.weather_layout = BoxLayout()
