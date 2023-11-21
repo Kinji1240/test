@@ -28,7 +28,7 @@ class WeatherApp(App):
         self.data = None
 
         # ルート レイアウトを作成
-        self.root_layout = BoxLayout(orientation='vertical')
+        self.root_layout = BoxLayout(orientation='horizontal')  # orientationをhorizontalに変更
 
         # 天気情報のための BoxLayout を作成
         self.weather_layout = BoxLayout()
