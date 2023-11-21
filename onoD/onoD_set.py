@@ -4,10 +4,10 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 
 # TimeDisplayAppをimport
-from testplay.time_display_app import TimeDisplayApp
+from testplay.testplay22.time_display_app import TimeDisplayApp
 
 # WeatherAppをimport
-from onoD_1day_weather import WeatherApp
+from onoD_ok_list.onoD_weather.onoD_1day_weather import WeatherApp
 
 class MainDisplayApp(App):
     def build(self):
