@@ -4,10 +4,10 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 
 # TimeDisplayAppをimport
-from testplay.testplay22.time_display_app import TimeDisplayApp
+from time_display_app import TimeDisplayApp
 
 # WeatherAppをimport
-from onoD_ok_list.onoD_weather.onoD_1day_weather import WeatherApp
+from onoD_1day_weather import WeatherApp
 
 class MainDisplayApp(App):
     def build(self):
@@ -23,6 +23,7 @@ class MainDisplayApp(App):
         weather_layout = weather_app.build()
 
         # レイアウトに各アプリの表示部分を追加
+        # size_hint_yを使用して高さの比率を調整
         layout.add_widget(time_display_layout)
         layout.add_widget(weather_layout)
 
