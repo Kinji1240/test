@@ -6,7 +6,7 @@ from datetime import datetime
 from kivy.uix.label import Label
 from kivy.uix.floatlayout import FloatLayout
 
-class ClockApp(BoxLayout):
+class ClockApp(App):
     def __init__(self, **kwargs):
         super(ClockApp, self).__init__(**kwargs)
         self.label = Label(text='', font_size=50, halign='center')
