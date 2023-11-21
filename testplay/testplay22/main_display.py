@@ -23,6 +23,7 @@ class MainDisplayApp(App):
         weather_layout = weather_app.build()
 
         # レイアウトに各アプリの表示部分を追加
+        # size_hint_yを使用して高さの比率を調整
         layout.add_widget(time_display_layout)
         layout.add_widget(weather_layout)
 
