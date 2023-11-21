@@ -1,4 +1,3 @@
-from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.image import Image
@@ -8,6 +7,11 @@ import requests
 import japanize_kivy
 import csv
 import os
+
+class MovableBoxLayout(BoxLayout):
+    def on_touch_move(self, touch):
+        if self.collide_point(*touch.pos):
+            self.pos = (touch.x - self.width / 2, touch.y - self.height / 2)
 
 class WeatherApp(App):
     def __init__(self, **kwargs):
@@ -31,7 +35,7 @@ class WeatherApp(App):
 
     def build(self):
         self.root_layout = BoxLayout(orientation='vertical')
-        self.weather_layout = BoxLayout()
+        self.weather_layout = MovableBoxLayout(orientation='vertical', size_hint=(1, 1))
         self.root_layout.add_widget(self.weather_layout)
 
         self.update_weather_data()
@@ -87,6 +91,8 @@ class WeatherApp(App):
             day_layout.add_widget(weather_image)
             day_layout.add_widget(dLabel2)
             self.weather_layout.add_widget(day_layout)
+
+
 
 def get_weather_meaning(weather_code):
     if 0 <= weather_code <= 3:
