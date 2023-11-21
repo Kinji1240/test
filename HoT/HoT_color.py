@@ -68,7 +68,7 @@ class FontSettingScreen(Screen):
     def change_font(self, font_name):
         if font_name == 'NikkyouSans-mLKax.ttf':
             # ここにフォントファイルの絶対パスを挿入
-            font_path = r'C:\Users\204061\Desktop\Git\test\HoT_font\NikkyouSans-mLKax.ttf'
+            font_path = r'test\font\NikkyouSans-mLKax.ttf'
             if os.path.exists(font_path):
                 LabelBase.register(name='NikkyouSans', fn_regular=font_path)
                 self.font_label.font_name = 'NikkyouSans'
