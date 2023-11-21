@@ -21,6 +21,7 @@ BoxLayout:
     WeatherApp:
         size_hint: 0.5, 1
         pos_hint: {'x': 0.5, 'y': 0}
+
 '''
 
 class ExternalApp(App):
