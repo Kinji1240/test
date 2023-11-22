@@ -43,21 +43,14 @@ class WeatherApp(App):
         # responses[0]がWeatherApiResponseオブジェクトを返すと仮定しています
         # 実際のオブジェクトがどのようなメソッドやプロパティを持っているかを確認してください
         if responses:
-            weather_data = responses[0].data  # この行は実際のオブジェクトに合わせて変更してください
-            self.data = weather_data
-            self.update_display(7)  # 初回は1日分のデータを表示
+            weather_api_response = responses[0]
+            # 'Current'データにアクセス
+            current_data = weather_api_response.Current()
+            # 'Current'データを出力
+            print("現在の天気データ:", current_data)
+            # これで、current_data.temperature、current_data.humidityなどの特定のプロパティにアクセスできます
         else:
-            print("Weather data not available.") 
-            if responses:
-                # WeatherApiResponseオブジェクトの属性を表示
-                print("WeatherApiResponse attributes:", dir(responses[0]))
-
-                # 実際のオブジェクトがどのような属性を持っているか確認したら、それに合わせて修正してください
-                weather_data = responses[0].data  # この行は実際のオブジェクトに合わせて変更してください
-                self.data = weather_data
-                self.update_display(7)  # 初回は1日分のデータを表示
-            else:
-                print("Weather data not available.")  # 初回は1日分のデータを表示
+            print("天気データは利用できません。")
 
     def update_display(self, days):
         if self.data:
@@ -74,7 +67,7 @@ class WeatherApp(App):
                         'day': time[i],
                         'max_temp': max_temperature[i],
                         'min_temp': min_temperature[i],
-                        'weather': get_weather_meaning(weather_code[i])
+                        'weather': self.get_weather_meaning(weather_code[i])  # self.を追加
                     }
                     weekly_data.append(day_data)
 
@@ -94,7 +87,7 @@ class WeatherApp(App):
             weather_label = Label(text=f"天気: {day_data['weather']}", font_size='20sp')
             dLabel2 = Label()
             # 天気に対応する画像を表示
-            weather_image = Image(source=get_weather_image(day_data['weather']))
+            weather_image = Image(source=self.get_weather_image(day_data['weather']))  # self.を追加
             day_layout.add_widget(dLabel1)
             day_layout.add_widget(day_label)
             day_layout.add_widget(max_temp_label)
@@ -104,7 +97,7 @@ class WeatherApp(App):
             day_layout.add_widget(dLabel2)
             self.weather_layout.add_widget(day_layout)
 
-    def get_weather_meaning(weather_code):
+    def get_weather_meaning(self, weather_code):  # self.を追加
         if 0 <= weather_code <= 3:
             return "00 - 03 晴れ"
         elif 4 <= weather_code <= 9:
@@ -117,8 +110,6 @@ class WeatherApp(App):
             return "36 - 39 吹雪または吹雪"
         elif 40 <= weather_code <= 49:
             return "40 - 49 霧または氷"
-        elif 40 <= weather_code <= 49:
-            return "40 - 49 霧または氷霧"
         elif 50 <= weather_code <= 59:
             return "50 - 59 霧雨"
         elif 60 <= weather_code <= 69:
@@ -132,7 +123,7 @@ class WeatherApp(App):
         else:
             return "不明な天気"
 
-    def get_weather_image(weather_meaning):
+    def get_weather_image(self, weather_meaning):  # self.を追加
         if "晴れ" in weather_meaning:
             return "sunny.png"
         elif "霞" in weather_meaning or "ほこり" in weather_meaning or "砂または煙" in weather_meaning:
