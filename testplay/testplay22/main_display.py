@@ -26,6 +26,9 @@ class MainDisplayApp(App):
         layout.add_widget(time_display_layout)
         layout.add_widget(weather_layout)
 
+        # multitouch_on_demandをTrueに設定
+        layout.multitouch_on_demand = True
+
         return layout
 
 if __name__ == '__main__':
