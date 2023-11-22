@@ -5,10 +5,22 @@ from kivy.app import App
 from kivy.clock import Clock
 import requests
 import japanize_kivy
+from kivy.core.window import Window
 import csv
 import os
 
 class MovableBoxLayout(BoxLayout):
+    ## インチあたりのピクセル数
+    pixels_per_inch = 96
+
+    # 縦8cm、横15cmのサイズをピクセルに変換
+    width_cm = 15
+    height_cm = 8
+    width_pixels = int(width_cm * pixels_per_inch / 2.54)
+    height_pixels = int(height_cm * pixels_per_inch / 2.54)
+
+    #    ウィンドウサイズの指定
+    Window.size = (width_pixels, height_pixels)
     def on_touch_move(self, touch):
         if self.collide_point(*touch.pos):
             self.pos = (touch.x - self.width / 2, touch.y - self.height / 2)
