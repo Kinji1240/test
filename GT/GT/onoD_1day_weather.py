@@ -3,10 +3,15 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.config import Config
+from kivy.core.window import Window
 import requests
 import japanize_kivy
 import csv
 import os
+
+# ウィンドウのサイズを指定（変更可能）
+Config.set('graphics', 'resizable', True)  # ウィンドウのサイズ変更を許可
 
 class MovableBoxLayout(BoxLayout):
     def on_touch_move(self, touch):
@@ -14,6 +19,7 @@ class MovableBoxLayout(BoxLayout):
             self.pos = (touch.x - self.width / 2, touch.y - self.height / 2)
 
 class WeatherApp(App):
+    
     def __init__(self, **kwargs):
         super(WeatherApp, self).__init__(**kwargs)
         self.api_url = "https://api.open-meteo.com/v1/forecast?latitude=34.7&longitude=135.5&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FTokyo"
@@ -37,6 +43,12 @@ class WeatherApp(App):
         self.root_layout = BoxLayout(orientation='vertical')
         self.weather_layout = MovableBoxLayout(orientation='vertical', size_hint=(1, 1))
         self.root_layout.add_widget(self.weather_layout)
+
+        # 通常のウィンドウサイズ
+        normal_width, normal_height = 800, 600
+
+        # ウィンドウサイズを設定
+        Window.size = (normal_width, normal_height)
 
         self.update_weather_data()
         Clock.schedule_interval(lambda dt: self.update_weather_data(), 3600)
