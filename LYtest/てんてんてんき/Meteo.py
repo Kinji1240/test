@@ -36,38 +36,45 @@ class WeatherApp(App):
         params = {
             "latitude": 52.52,
             "longitude": 13.42,
-            "daily": ["weather_code", "temperature_2m_max", "temperature_2m_min"]
+            "daily": ["weather_code", "temperature_2m_max", "temperature_2m_min"],
+            "timezone": "Asia/Tokyo"
         }
         responses = openmeteo.weather_api(url, params=params)
 
-        # responses[0]がWeatherApiResponseオブジェクトを返すと仮定しています
-        # 実際のオブジェクトがどのようなメソッドやプロパティを持っているかを確認してください
-        if responses:
-            weather_api_response = responses[0]
-            # 'Current'データにアクセス
-            current_data = weather_api_response.Current()
-            # 'Current'データを出力
-            print("現在の天気データ:", current_data)
-            # これで、current_data.temperature、current_data.humidityなどの特定のプロパティにアクセスできます
+        # レスポンス情報を出力
+        for response in responses:
+            print("API Response:", response)
+        
+            # WeatherApiResponseオブジェクトの属性やメソッドにアクセスする必要がある場合は、
+            # ライブラリのドキュメントを確認して正しい方法で取得してください。
+            # 以下は、一例としてresponse.request.urlを出力する部分です。
+            try:
+                print("API Request URL:", response.request.url)
+            except AttributeError as e:
+                print(f"Error accessing request URL: {e}")
+
+        if responses and isinstance(responses[0], dict):
+            weather_data = responses[0].get("daily", {})  # レスポンスから天気情報のデータを取得
+            self.update_display(weather_data)
         else:
             print("天気データは利用できません。")
 
-    def update_display(self, days):
-        if self.data:
-            daily_data = self.data.get("daily", {})
-            time = daily_data.get("time", [])
-            max_temperature = daily_data.get("temperature_2m_max", [])
-            min_temperature = daily_data.get("temperature_2m_min", [])
-            weather_code = daily_data.get("weather_code", [])
+
+    def update_display(self, weather_data):
+        if weather_data:
+            time = weather_data.get("time", [])
+            max_temperature = weather_data.get("temperature_2m_max", [])
+            min_temperature = weather_data.get("temperature_2m_min", [])
+            weather_code = weather_data.get("weather_code", [])
 
             if time and max_temperature and min_temperature and weather_code:
                 weekly_data = []  # 指定された日数分のデータを格納するリスト
-                for i in range(min(days, len(time))):  # days とデータの個数の小さい方を使用
+                for i in range(min(7, len(time))):  # 7日間分のデータを使用
                     day_data = {
                         'day': time[i],
                         'max_temp': max_temperature[i],
                         'min_temp': min_temperature[i],
-                        'weather': self.get_weather_meaning(weather_code[i])  # self.を追加
+                        'weather': self.get_weather_meaning(weather_code[i])
                     }
                     weekly_data.append(day_data)
 
@@ -86,8 +93,9 @@ class WeatherApp(App):
             min_temp_label = Label(text=f"最低気温: {day_data['min_temp']}°C", font_size='20sp')
             weather_label = Label(text=f"天気: {day_data['weather']}", font_size='20sp')
             dLabel2 = Label()
+
             # 天気に対応する画像を表示
-            weather_image = Image(source=self.get_weather_image(day_data['weather']))  # self.を追加
+            weather_image = Image(source=self.get_weather_image(day_data['weather']))
             day_layout.add_widget(dLabel1)
             day_layout.add_widget(day_label)
             day_layout.add_widget(max_temp_label)

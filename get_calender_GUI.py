@@ -17,7 +17,7 @@ class CalendarApp(App):
         SCOPES = ['https://www.googleapis.com/auth/calendar']
         calendar_id = 'j5gr4sa@gmail.com'
         gapi_creds = load_credentials_from_file(
-            'C:/Users/204014/git_test/j5g-p-403802-f6d11f806041.json',
+            'j5g-p-403802-f6d11f806041.json',
             SCOPES
         )
         service = build('calendar', 'v3', credentials=gapi_creds[0])
@@ -36,18 +36,23 @@ class CalendarApp(App):
 
         # イベントの開始時刻、終了時刻、概要を取得して出力する
         events = event_list.get('items', [])
-        schedule = "[今日の予定]\n"
 
-        for event in events:
-            start_time = event['start'].get('dateTime', event['start'].get('date'))
-            end_time = event['end'].get('dateTime', event['end'].get('date'))
-            summary = event['summary']
+        # イベントが存在する場合にスケジュールを構築
+        if events:
+            schedule = "[今日の予定]\n"
 
-            # イベントが終日の場合
-            if 'date' in start_time:
-                schedule += f'{start_time}: {summary} (終日)\n'
-            else:
-                schedule += f'{start_time} ～ {end_time}: {summary}\n'
+            for event in events:
+                start_time = event['start'].get('dateTime', event['start'].get('date'))
+                end_time = event['end'].get('dateTime', event['end'].get('date'))
+                summary = event.get('summary', 'No summary')
+
+                # イベントが終日の場合
+                if 'date' in start_time:
+                    schedule += f'{start_time}: {summary} (終日)\n'
+                else:
+                    schedule += f'{start_time} ～ {end_time}: {summary}\n'
+        else:
+            schedule = "[今日の予定はありません]\n"
 
         # 予定を表示
         schedule_label = Label(text=schedule)
