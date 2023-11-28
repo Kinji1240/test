@@ -9,8 +9,8 @@ import japanize_kivy
 import openmeteo_requests
 
 import requests_cache
-import pandas as pd
 from retry_requests import retry
+import pandas as pd
 
 class WeatherApp(App):
     def build(self):
@@ -28,15 +28,22 @@ class WeatherApp(App):
         return self.root_layout
 
     def update_weather_data(self, dt=None):
+        # CSVファイルから座標を読み込む
+        coordinates_df = pd.read_csv("test/LYtest/47都道府県IDOKEIDO.xlsx")
+
+        # 例として、最初の都道府県の座標を使用する
+        user_latitude = coordinates_df.loc[0, "緯度"]
+        user_longitude = coordinates_df.loc[0, "経度"]
+
         cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
         retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
         openmeteo = openmeteo_requests.Client(session=retry_session)
 
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": 52.52,
-            "longitude": 13.42,
-            "daily": ["weather_code", "temperature_2m_max", "temperature_2m_min"],
+            "latitude": user_latitude,
+            "longitude": user_longitude,
+            "daily": ["temperature_2m_max", "temperature_2m_min", "weather_code"],
             "timezone": "Asia/Tokyo"
         }
         responses = openmeteo.weather_api(url, params=params)
@@ -44,10 +51,7 @@ class WeatherApp(App):
         # レスポンス情報を出力
         for response in responses:
             print("API Response:", response)
-        
-            # WeatherApiResponseオブジェクトの属性やメソッドにアクセスする必要がある場合は、
-            # ライブラリのドキュメントを確認して正しい方法で取得してください。
-            # 以下は、一例としてresponse.request.urlを出力する部分です。
+
             try:
                 print("API Request URL:", response.request.url)
             except AttributeError as e:
@@ -58,7 +62,6 @@ class WeatherApp(App):
             self.update_display(weather_data)
         else:
             print("天気データは利用できません。")
-
 
     def update_display(self, weather_data):
         if weather_data:
