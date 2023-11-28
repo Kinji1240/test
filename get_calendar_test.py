@@ -8,7 +8,7 @@ calendar_id = 'j5gr4sa@gmail.com'
 
 # Googleの認証情報をファイルから読み込む
 gapi_creds = google.auth.load_credentials_from_file(
-    'C:/Users/204014/git_test/j5g-p-403802-f6d11f806041.json',
+    'C:/Users/204012/test/j5g-p-403802-f6d11f806041.json',
     SCOPES
 )[0]
 
