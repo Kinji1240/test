@@ -11,7 +11,7 @@ class CalendarApp(App):
     def build(self):
         # Kivyウィジェットの作成
         self.layout = BoxLayout(orientation='vertical')
-        self.label = Label(text='一日の予定:')
+        self.label = Label(text='一日の予定:', font_size='20sp')  # フォントサイズを大きく設定
         self.layout.add_widget(self.label)
 
         # Google Calendar APIの準備
