@@ -1,0 +1,37 @@
+# main_display.py
+
+from kivy.app import App
+from kivy.uix.floatlayout import FloatLayout
+
+# TimeDisplayAppをimport
+from time_display_app import TimeDisplayApp
+
+# WeatherAppをimport
+from onoD_1day_weather import WeatherApp
+
+class MainDisplayApp(App):
+    def build(self):
+        # レイアウトのインスタンスを作成
+        layout = FloatLayout()
+
+        # TimeDisplayAppとWeatherAppのインスタンスを作成
+        time_display_app = TimeDisplayApp()
+        weather_app = WeatherApp()
+
+        # 各アプリの表示部分を取得
+        time_display_layout = time_display_app.build()
+        weather_layout = weather_app.build()
+
+        time_display_layout.pos = (500, 200)
+        weather_layout.pos = (200, 100)
+        # レイアウトに各アプリの表示部分を追加
+        layout.add_widget(time_display_layout)
+        layout.add_widget(weather_layout)
+
+        # multitouch_on_demandをTrueに設定
+        layout.multitouch_on_demand = True
+
+        return layout
+
+if __name__ == '__main__':
+    MainDisplayApp().run()
