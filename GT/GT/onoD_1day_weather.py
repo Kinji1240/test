@@ -3,27 +3,21 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.uix.button import Button
+from kivy.core.window import Window
+from kivy.uix.behaviors import DragBehavior
 import requests
 import japanize_kivy
-from kivy.core.window import Window
 import csv
 import os
 
-class MovableBoxLayout(BoxLayout):
-    ## インチあたりのピクセル数
-    pixels_per_inch = 96
 
-    # 縦8cm、横15cmのサイズをピクセルに変換
-    width_cm = 15
-    height_cm = 8
-    width_pixels = int(width_cm * pixels_per_inch / 2.54)
-    height_pixels = int(height_cm * pixels_per_inch / 2.54)
+class DraggableBoxLayout(DragBehavior, BoxLayout):
+    def __init__(self, **kwargs):
+        super(DraggableBoxLayout, self).__init__(**kwargs)
+        self.drag_rectangle = self.x, self.y, self.width, self.height
+        self.drag_timeout = 10000000
 
-    #    ウィンドウサイズの指定
-    Window.size = (width_pixels, height_pixels)
-    def on_touch_move(self, touch):
-        if self.collide_point(*touch.pos):
-            self.pos = (touch.x - self.width / 2, touch.y - self.height / 2)
 
 class WeatherApp(App):
     def __init__(self, **kwargs):
@@ -47,7 +41,7 @@ class WeatherApp(App):
 
     def build(self):
         self.root_layout = BoxLayout(orientation='vertical')
-        self.weather_layout = MovableBoxLayout(orientation='vertical', size_hint=(1, 1))
+        self.weather_layout = DraggableBoxLayout(orientation='vertical', size_hint=(1, 1))
         self.root_layout.add_widget(self.weather_layout)
 
         self.update_weather_data()
@@ -105,7 +99,6 @@ class WeatherApp(App):
             self.weather_layout.add_widget(day_layout)
 
 
-
 def get_weather_meaning(weather_code):
     if 0 <= weather_code <= 3:
         return "00 - 03 晴れ"
@@ -132,10 +125,11 @@ def get_weather_meaning(weather_code):
     else:
         return "不明"
 
+
 def get_weather_image(weather_meaning):
     # 仮の実装: 天気に応じて異なる画像を返す
     if '晴れ' in weather_meaning:
-        return 'test/onoD/sun.png' #実施環境用にパスを変更してください
+        return 'test/onoD/sun.png'  # 実施環境用にパスを変更してください
     elif '雨' in weather_meaning:
         return 'test/onoD/umbrella.png'
     elif '霞、ほこり、砂または煙' in weather_meaning:
@@ -158,6 +152,7 @@ def get_weather_image(weather_meaning):
         return 'test/onoD/umbrella.png'
     else:
         return 'test/onoD/umbrella.png'
+
 
 if __name__ == '__main__':
     WeatherApp().run()
