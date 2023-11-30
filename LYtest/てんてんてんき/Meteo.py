@@ -6,12 +6,12 @@ from kivy.app import App
 from kivy.clock import Clock
 import requests
 import japanize_kivy
-import openmeteo_sdk
-
-import requests_cache
+from openmeteo_sdk import OpenMeteo
 from retry_requests import retry
 import pandas as pd
-print(dir(openmeteo_sdk))
+import requests_cache
+
+
 
 class WeatherApp(App):
     def build(self):
@@ -33,12 +33,14 @@ class WeatherApp(App):
         coordinates_df = pd.read_csv("test/LYtest/47都道府県IDOKEIDO-UTF8.csv", encoding="UTF-8")
 
         # 例として、最初の都道府県の座標を使用する
-        user_latitude = coordinates_df.loc[0, "緯度"]
-        user_longitude = coordinates_df.loc[0, "経度"]
+        user_latitude = coordinates_df.loc[5, "緯度"]
+        user_longitude = coordinates_df.loc[5, "経度"]
 
         cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
         retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
-        openmeteo = openmeteo_sdk.Client(session=retry_session)
+
+        # OpenMeteoクラスを使用するように変更
+        openmeteo = OpenMeteo(session=retry_session)
 
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
@@ -51,12 +53,6 @@ class WeatherApp(App):
         try:
             response = openmeteo.weather_api(url, params=params)
             print("API Response:", response)
-
-            # レスポンス情報を出力
-            try:
-                print("API Request URL:", response.request.url)
-            except AttributeError as e:
-                print(f"Error accessing request URL: {e}")
 
             # レスポンスがリスト形式であれば、最初の要素を取得
             if isinstance(response, list):
@@ -114,7 +110,7 @@ class WeatherApp(App):
             day_layout.add_widget(dLabel2)
             self.weather_layout.add_widget(day_layout)
 
-    def get_weather_meaning(self, weather_code):  # self.を追加
+    def get_weather_meaning(self, weather_code):
         if 0 <= weather_code <= 3:
             return "00 - 03 晴れ"
         elif 4 <= weather_code <= 9:
@@ -142,7 +138,7 @@ class WeatherApp(App):
         else:
             return "不明な天気"
 
-    def get_weather_image(self, weather_meaning):  # self.を追加
+    def get_weather_image(self, weather_meaning):
         if "晴れ" in weather_meaning:
             return "sunny.png"
         elif "霞" in weather_meaning or "ほこり" in weather_meaning or "砂または煙" in weather_meaning:

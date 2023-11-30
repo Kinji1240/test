@@ -1,0 +1,15 @@
+# weather.kv
+
+<WeatherApp>:
+    weather_layout: weather_layout
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        # 天気情報のための BoxLayout
+        BoxLayout:
+            id: weather_layout
+
+        Button:
+            text: 'Update Weather'
+            on_release: app.update_weather_data()
