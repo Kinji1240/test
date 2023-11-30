@@ -2,10 +2,10 @@ from kivy.resources import resource_add_path
 from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.clock import Clock
 from kivy.core.text import LabelBase
+from kivy.graphics import Color, Rectangle
 import time
 import csv
 
@@ -43,11 +43,13 @@ class ClockScreen(Screen):
             pass
 
     def apply_settings(self, selected_font, selected_color):
-        if selected_color:
-            self.clock_label.color = selected_color
+        with self.canvas.before:
+            Color(*selected_color)
+            Rectangle(pos=self.pos, size=self.size)
+
         if selected_font:
             if selected_font == 'NikkyouSans-mLKax.ttf':
-                font_path = 'HoT_font/NikkyouSans-mLKax.ttf'  # パスの修正
+                font_path = 'HoT_font/NikkyouSans-mLKax.ttf'
                 if LabelBase.have_font('NikkyouSans'):
                     LabelBase.unregister('NikkyouSans')
                 LabelBase.register(name='NikkyouSans', fn_regular=font_path)
