@@ -9,8 +9,8 @@ import csv
 
 class ClockApp(App):
     def build(self):
-        # 初期フォントのパスを指定
-        fontname, fcolar1,fcolar2,fcolar3,fcolar4 = self.load_button_position()
+        # 
+        fontname, fcolar1,fcolar2,fcolar3,fcolar4 = self.load_csv()
         fcolar1 = float(fcolar1)
         fcolar2 = float(fcolar2)
         fcolar3 = float(fcolar3)
@@ -39,7 +39,7 @@ class ClockApp(App):
         current_time = time.strftime("%H:%M:%S", time.localtime())
         return current_time
     
-    def load_button_position(self):
+    def load_csv(self):
         # CSVファイルからボタンの座標を取得するメソッド
 
         filename = 'settings.csv'
@@ -52,8 +52,7 @@ class ClockApp(App):
             fcolar2 = data[0][2]
             fcolar3 = data[0][3]
             fcolar4 = data[0][4]
-            fcolar=fcolar1+fcolar2+fcolar3+fcolar4
-            print(fcolar)
+            
 
 
         return fname,fcolar1,fcolar2,fcolar3,fcolar4
