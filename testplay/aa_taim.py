@@ -19,7 +19,7 @@ class FontSettingScreen(Screen):
     def __init__(self, **kwargs):
         super(FontSettingScreen, self).__init__(**kwargs)
         # アプリ起動時に保存された情報を読み込んで適用
-        self.load_settings_once()
+        self.load_settings()
 
         self.layout = BoxLayout(orientation='vertical')
 
@@ -55,11 +55,6 @@ class FontSettingScreen(Screen):
     def on_leave(self):
         # 画面を離れるときに設定を保存
         self.save_settings()
-
-    def load_settings_once(self):
-        if not hasattr(self, 'settings_loaded'):
-            self.load_settings()
-            self.settings_loaded = True
 
     def load_settings(self):
         try:
@@ -146,7 +141,7 @@ class MainScreen(Screen):
         self.add_widget(self.layout)
 
         # 新しく追加した部分: 色情報を格納
-        #self.selected_color = [1, 1, 1, 1]
+        self.selected_color = [1, 1, 1, 1]
 
     def update_time(self, dt):
         self.time_label.text = self.get_japanese_time()
@@ -172,6 +167,8 @@ class MainScreen(Screen):
         self.manager.current = 'font_setting'
 
 class ClockScreen(Screen):
+    selected_color = ListProperty([1, 1, 1, 1])
+    selected_font = StringProperty('')  # デフォルト値として空の文字列を設定
 
     def __init__(self, **kwargs):
         super(ClockScreen, self).__init__(**kwargs)
