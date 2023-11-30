@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 import requests
+import japanize_kivy
 
 class WeatherApp(App):
     def build(self):
