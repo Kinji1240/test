@@ -33,8 +33,8 @@ class WeatherApp(App):
         coordinates_df = pd.read_csv("test/LYtest/47都道府県IDOKEIDO-UTF8.csv", encoding="UTF-8")
 
         # 例として、最初の都道府県の座標を使用する
-        user_latitude = coordinates_df.loc[0, "緯度"]
-        user_longitude = coordinates_df.loc[0, "経度"]
+        user_latitude = coordinates_df.loc[5, "緯度"]
+        user_longitude = coordinates_df.loc[5, "経度"]
 
         cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
         retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
