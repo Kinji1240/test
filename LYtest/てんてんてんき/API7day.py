@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 import requests
 import japanize_kivy
+from datetime import datetime
 
 class WeatherApp(App):
     def get_weather_meaning(self, weather_code):
@@ -39,8 +40,12 @@ class WeatherApp(App):
         else:
             return "不明な天気"
 
-    def build(self):
+    def format_date(self, date_str):
+        date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M")
+        formatted_date = date_obj.strftime("%Y-%m-%d %H:%M")
+        return formatted_date
 
+    def build(self):
         layout = BoxLayout(orientation='vertical')
         coordinates_df = pd.read_csv('test/LYtest/47都道府県IDOKEIDO-UTF8.csv')
 
@@ -57,10 +62,11 @@ class WeatherApp(App):
 
             def update_weather_data(dt):
                 layout.clear_widgets()
+                url = "https://api.open-meteo.com/v1/forecast"
+
                 if self.selected_data is not None:
                     user_latitude = self.selected_data['latitude']
                     user_longitude = self.selected_data['longitude']
-                    url = "https://api.open-meteo.com/v1/forecast"
                     params = {
                         "latitude": user_latitude,
                         "longitude": user_longitude,
@@ -72,18 +78,21 @@ class WeatherApp(App):
 
                     if response.status_code == 200:
                         data = response.json()
+                        date = data["hourly"]["time"][0]
+                        formatted_date = self.format_date(date)
                         temperature = data["hourly"]["temperature_2m"][0]
                         max_temperature = data["daily"]["temperature_2m_max"][0]
                         min_temperature = data["daily"]["temperature_2m_min"][0]
                         weather_code = data["daily"]["weather_code"][0]
                         weather_meaning = self.get_weather_meaning(weather_code)
-                        print
 
+                        date_label = Label(text=f"日付: {formatted_date}")
                         temperature_label = Label(text=f"現在の気温: {temperature} ℃")
                         max_temperature_label = Label(text=f"最高気温: {max_temperature} ℃")
                         min_temperature_label = Label(text=f"最低気温: {min_temperature} ℃")
                         weather_label = Label(text=f"天気: {weather_meaning}")
 
+                        layout.add_widget(date_label)
                         layout.add_widget(temperature_label)
                         layout.add_widget(max_temperature_label)
                         layout.add_widget(min_temperature_label)
