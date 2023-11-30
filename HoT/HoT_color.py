@@ -10,11 +10,16 @@ from kivy.core.text import LabelBase
 import time
 import os
 import csv
-import japanize_kivy
+from kivy.properties import StringProperty, ListProperty
 
 class FontSettingScreen(Screen):
+    selected_font = StringProperty('')
+    selected_color = ListProperty([1, 1, 1, 1])
+
     def __init__(self, **kwargs):
         super(FontSettingScreen, self).__init__(**kwargs)
+        # アプリ起動時に保存された情報を読み込んで適用
+        self.load_settings()
 
         self.layout = BoxLayout(orientation='vertical')
 
@@ -47,9 +52,27 @@ class FontSettingScreen(Screen):
         Clock.schedule_interval(self.update_time, 1)
         self.add_widget(self.layout)
 
-        # 新しく追加した部分: 色情報とフォント情報を格納する属性
-        self.selected_color = None
-        self.selected_font = None
+    def on_leave(self):
+        # 画面を離れるときに設定を保存
+        self.save_settings()
+
+    def load_settings(self):
+        try:
+            with open('settings.csv', 'r', newline='') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    self.selected_font = row['font_name']
+                    self.selected_color = [float(val) for val in row['selected_color'].split(',')]
+                    self.apply_settings()  # 保存された情報を適用
+        except FileNotFoundError:
+            pass
+
+    def save_settings(self):
+        with open('settings.csv', 'w', newline='') as csvfile:
+            fieldnames = ['font_name', 'selected_color']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            for row in [{'font_name': self.selected_font, 'selected_color': ','.join(map(str, self.selected_color))}]:
+                writer.writerow(row)
 
     def update_time(self, dt):
         self.font_label.text = self.get_japanese_time()
@@ -68,59 +91,28 @@ class FontSettingScreen(Screen):
     def change_font(self, font_name):
         if font_name == 'NikkyouSans-mLKax.ttf':
             # ここにフォントファイルの絶対パスを挿入
-            font_path = r'test\font\NikkyouSans-mLKax.ttf'
+            font_path = r'HoT_font\NikkyouSans-mLKax.ttf'
             if os.path.exists(font_path):
                 LabelBase.register(name='NikkyouSans', fn_regular=font_path)
                 self.font_label.font_name = 'NikkyouSans'
                 # 新しく追加した部分: フォント情報を格納
                 self.selected_font = 'NikkyouSans'
         else:
-            self.font_label.font_name = font_name
             # 新しく追加した部分: フォント情報を格納
+            self.font_label.font_name = font_name
             self.selected_font = font_name
 
     def confirm_action(self, instance):
         print("確定ボタンが押されました。")
-
-        # フォント情報をCSVに保存
-        self.save_font_info_to_csv()
-
-        # 色情報を次の画面に渡す
         clock_screen = self.manager.get_screen('clock')
         clock_screen.selected_color = self.selected_color
         clock_screen.selected_font = self.selected_font
-
-        # HoT_clockに遷移
         self.manager.current = 'clock'
 
-        # CSVファイルの内容をターミナルに表示
-        self.display_csv_content()
-
-    def save_font_info_to_csv(self):
-        try:
-            # CSVファイルにフォント情報を追加
-            with open("font_info.csv", mode='a', newline='', encoding='utf-8') as csvfile:
-                fieldnames = ['Font']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writerow({'Font': self.selected_font})
-                print("フォント情報がCSVファイルに追加されました。")
-
-        except Exception as e:
-            print(f"CSV書き込みエラー: {e}")
-
-    def display_csv_content(self):
-        try:
-            # CSVファイルの内容をターミナルに表示
-            with open("font_info.csv", mode='r', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                print("CSVファイルの内容:")
-                for row in reader:
-                    print(row)
-
-        except Exception as e:
-            print(f"CSV読み込みエラー: {e}")
 
 class MainScreen(Screen):
+    selected_color = ListProperty([1, 1, 1, 1])
+
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
 
@@ -149,7 +141,7 @@ class MainScreen(Screen):
         self.add_widget(self.layout)
 
         # 新しく追加した部分: 色情報を格納
-        self.selected_color = None
+        self.selected_color = [1, 1, 1, 1]
 
     def update_time(self, dt):
         self.time_label.text = self.get_japanese_time()
@@ -165,9 +157,7 @@ class MainScreen(Screen):
 
     def confirm_action(self, color, *args):
         print("確定ボタンが押されました。")
-        print("選択された色:", color)
-
-        # ... (略)
+        print("選択された色:", self.selected_color)
 
     def switch_to_font_setting(self, instance):
         print("フォント設定画面に遷移します。")
@@ -177,6 +167,9 @@ class MainScreen(Screen):
         self.manager.current = 'font_setting'
 
 class ClockScreen(Screen):
+    selected_color = ListProperty([1, 1, 1, 1])
+    selected_font = StringProperty('')  # デフォルト値として空の文字列を設定
+
     def __init__(self, **kwargs):
         super(ClockScreen, self).__init__(**kwargs)
 
@@ -186,12 +179,9 @@ class ClockScreen(Screen):
         self.layout.add_widget(self.clock_label)
 
         Clock.schedule_interval(self.update_time, 1)  # 1秒ごとに時間を更新
-
         self.add_widget(self.layout)
-
-        # 新しく追加した部分: 色情報とフォント情報を格納する属性
-        self.selected_color = None
-        self.selected_font = None
+        self.selected_color = [1, 1, 1, 1]
+        self.selected_font = ''  # 空の文字列で初期化
 
     def update_time(self, dt):
         self.clock_label.text = self.get_japanese_time()
