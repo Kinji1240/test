@@ -14,8 +14,8 @@ class WeatherApp(App):
         # Open Meteo APIからデータを取得
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": user_latitude,  # ご自身の緯度に変更
-            "longitude": user_longitude,  # ご自身の経度に変更
+            "latitude": user_latitude,
+            "longitude": user_longitude,
             "hourly": "temperature_2m",
             "daily": ["weather_code", "temperature_2m_max", "temperature_2m_min"],
             "timezone": "Asia/Tokyo"
@@ -30,15 +30,21 @@ class WeatherApp(App):
 
             # データの構造に基づいて適切にアクセスする
             temperature = data["hourly"]["temperature_2m"][0]
+            max_temperature = data["daily"]["temperature_2m_max"][0]
+            min_temperature = data["daily"]["temperature_2m_min"][0]
             weather_code = data["daily"]["weather_code"][0]
 
             # KivyアプリケーションのUIを構築
             layout = BoxLayout(orientation='vertical')
             temperature_label = Label(text=f"現在の気温: {temperature} ℃")
+            max_temperature_label = Label(text=f"最高気温: {max_temperature} ℃")
+            min_temperature_label = Label(text=f"最低気温: {min_temperature} ℃")
             weather_label = Label(text=f"天気コード: {weather_code}")
 
             # レイアウトにウィジェットを追加
             layout.add_widget(temperature_label)
+            layout.add_widget(max_temperature_label)
+            layout.add_widget(min_temperature_label)
             layout.add_widget(weather_label)
 
             return layout
