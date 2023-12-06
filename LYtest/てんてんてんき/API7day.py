@@ -60,13 +60,25 @@ class WeatherApp(App):
             spinner.bind(text=on_spinner_change)
             layout.add_widget(spinner)
 
+            # 日数を選択する Spinner を追加
+            days_spinner = Spinner(text='日数を選択', values=['1日', '3日'])
+            layout.add_widget(days_spinner)
+
+            # BoxLayout を追加して横に並べる
+            horizontal_layout = BoxLayout(orientation='horizontal')
+            layout.add_widget(horizontal_layout)
+
             def update_weather_data(dt):
-                layout.clear_widgets()
+                # horizontal_layout のウィジェットをクリア
+                horizontal_layout.clear_widgets()
+
                 url = "https://api.open-meteo.com/v1/forecast"
 
                 if self.selected_data is not None:
                     user_latitude = self.selected_data['latitude']
                     user_longitude = self.selected_data['longitude']
+                    selected_days = days_spinner.text  # 選択された日数を取得
+
                     params = {
                         "latitude": user_latitude,
                         "longitude": user_longitude,
@@ -74,31 +86,50 @@ class WeatherApp(App):
                         "daily": ["weather_code", "temperature_2m_max", "temperature_2m_min"],
                         "timezone": "Asia/Tokyo"
                     }
+
                     response = requests.get(url, params=params)
 
                     if response.status_code == 200:
                         data = response.json()
-                        date = data["hourly"]["time"][0]
-                        formatted_date = self.format_date(date)
-                        temperature = data["hourly"]["temperature_2m"][0]
-                        max_temperature = data["daily"]["temperature_2m_max"][0]
-                        min_temperature = data["daily"]["temperature_2m_min"][0]
-                        weather_code = data["daily"]["weather_code"][0]
-                        weather_meaning = self.get_weather_meaning(weather_code)
+                        hourly_data = data["hourly"]
+                        daily_data = data["daily"]
 
-                        date_label = Label(text=f"日付: {formatted_date}")
-                        temperature_label = Label(text=f"現在の気温: {temperature} ℃")
-                        max_temperature_label = Label(text=f"最高気温: {max_temperature} ℃")
-                        min_temperature_label = Label(text=f"最低気温: {min_temperature} ℃")
-                        weather_label = Label(text=f"天気: {weather_meaning}")
+                        # 日数に応じて表示するデータの範囲を調整
+                        if selected_days == '1日':
+                            range_end = 1
+                        elif selected_days == '3日':
+                            range_end = 3
+                        else:
+                            range_end = 1  # デフォルトは1日
 
-                        layout.add_widget(date_label)
-                        layout.add_widget(temperature_label)
-                        layout.add_widget(max_temperature_label)
-                        layout.add_widget(min_temperature_label)
-                        layout.add_widget(weather_label)
+                        for i in range(range_end):
+                            date = hourly_data["time"][i]
+                            formatted_date = self.format_date(date)
+                            temperature = hourly_data["temperature_2m"][i]
+                            max_temperature = daily_data["temperature_2m_max"][i]
+                            min_temperature = daily_data["temperature_2m_min"][i]
+                            weather_code = daily_data["weather_code"][i]
+                            weather_meaning = self.get_weather_meaning(weather_code)
+
+                            # 横に並べて表示するために BoxLayout を使用
+                            box = BoxLayout(orientation='vertical')
+                            date_label = Label(text=f"日付: {formatted_date}")
+                            temperature_label = Label(text=f"現在の気温: {temperature} ℃")
+                            max_temperature_label = Label(text=f"最高気温: {max_temperature} ℃")
+                            min_temperature_label = Label(text=f"最低気温: {min_temperature} ℃")
+                            weather_label = Label(text=f"天気: {weather_meaning}")
+
+                            # box を horizontal_layout に追加
+                            horizontal_layout.add_widget(box)
+
+                            # box に各情報を追加
+                            box.add_widget(date_label)
+                            box.add_widget(temperature_label)
+                            box.add_widget(max_temperature_label)
+                            box.add_widget(min_temperature_label)
+                            box.add_widget(weather_label)
                     else:
-                        layout.add_widget(Label(text=f"エラー: {response.status_code}"))
+                        horizontal_layout.add_widget(Label(text=f"エラー: {response.status_code}"))
 
             update_button = Button(text="天気を更新", size_hint=(None, None))
             update_button.bind(on_press=update_weather_data)

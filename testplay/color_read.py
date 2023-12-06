@@ -1,73 +1,47 @@
-from kivy.resources import resource_add_path
+# -*- coding: utf-8 -*-
+
 from kivy.app import App
-from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.clock import Clock
-from kivy.core.text import LabelBase
+from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle
-import time
 import csv
 
-class ClockScreen(Screen):
-    def __init__(self, **kwargs):
-        super(ClockScreen, self).__init__(**kwargs)
+class ColorDisplayApp(App):
+    def build(self):
+        # レイアウトの作成
+        layout = BoxLayout(orientation='vertical')
 
-        self.layout = BoxLayout(orientation='vertical')
+        # CSVファイルから色情報を読み込む
+        colors = self.load_colors_from_csv('test/settings.csv')
 
-        self.clock_label = Label(text=self.get_japanese_time(), font_size='40sp', size_hint=(1, 0.7))
-        self.layout.add_widget(self.clock_label)
+        # 色情報を表示
+        for color in colors:
+            label = Label(text=color['name'], size_hint_y=None, height=44)
+            layout.add_widget(label)
 
-        Clock.schedule_interval(self.update_time, 1)
-        self.add_widget(self.layout)
+            with label.canvas:
+                Color(*color['rgb'])
+                Rectangle(pos=label.pos, size=label.size)
 
-        # 設定ファイルから情報を読み込む
-        self.load_settings()
+        return layout
 
-    def update_time(self, dt):
-        self.clock_label.text = self.get_japanese_time()
-
-    def get_japanese_time(self):
-        current_time = time.strftime("%H:%M:%S", time.localtime())
-        return current_time
-
-    def load_settings(self):
+    def load_colors_from_csv(self, filename):
+        colors = []
         try:
-            with open('settings.csv', 'r', newline='') as csvfile:
+            with open(filename, 'r') as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
-                    selected_font = row['font_name']
-                    selected_color = [float(val) for val in row['selected_color'].split(',')]
-                    self.apply_settings(selected_font, selected_color)
+                    color = {
+                        'name': row['name'],
+                        'rgb': [float(row['red']), float(row['green']), float(row['blue']), 1]
+                    }
+                    colors.append(color)
         except FileNotFoundError:
-            pass
+            print(f"Error: File '{filename}' not found.")
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
 
-    def apply_settings(self, selected_font, selected_color):
-        with self.canvas.before:
-            Color(*selected_color)
-            Rectangle(pos=self.pos, size=self.size)
-
-        if selected_font:
-            if selected_font == 'NikkyouSans-mLKax.ttf':
-                font_path = 'HoT_font/NikkyouSans-mLKax.ttf'
-                if LabelBase.have_font('NikkyouSans'):
-                    LabelBase.unregister('NikkyouSans')
-                LabelBase.register(name='NikkyouSans', fn_regular=font_path)
-                self.clock_label.font_name = 'NikkyouSans'
-            else:
-                self.clock_label.font_name = selected_font
-
-class TimeDisplayApp(App):
-    def build(self):
-        # フォントのパスを追加
-        resource_add_path("HoT_font")
-
-        self.sm = ScreenManager()
-
-        clock_screen = ClockScreen(name='clock')
-        self.sm.add_widget(clock_screen)
-
-        return self.sm
+        return colors
 
 if __name__ == '__main__':
-    TimeDisplayApp().run()
+    ColorDisplayApp().run()
