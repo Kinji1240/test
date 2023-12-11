@@ -1,73 +1,73 @@
+import pandas as pd
 from kivy.app import App
+from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.spinner import Spinner
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
+from kivy.clock import Clock
+from kivy.core.window import Window
 import csv
+import requests
 import japanize_kivy
+from datetime import datetime
 
-class DataDisplayApp(App):
+class WeatherApp(App):
+
     def build(self):
-        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        layout = BoxLayout(orientation='vertical')
+        coordinates_df = pd.read_csv('test/LYtest/47都道府県IDOKEIDO-UTF8.csv')
 
-        # プルダウンメニューを作成
-        self.spinner= Spinner(text='都道府県選択', values=("北海道","東京","大阪") ,size_hint=(0.5, None))
-        spinner =self.spinner
-        # データ取得ボタンを作成
-        data_button = Button(text='保存', size_hint=(None, None), width=100, height=50)
-        data_button.bind(on_press=self.data_button_click)
-        
-        layout.add_widget(self.spinner)
-        layout.add_widget(data_button)
+        if 'latitude' in coordinates_df.columns and 'longitude' in coordinates_df.columns:
+            self.selected_data = None
+            spinner_values = coordinates_df['都道府県'].tolist()
+            spinner = Spinner(text='都道府県を選択', values=spinner_values)
+            
 
-        return layout
-    
-    def data_button_click(self, instance): 
+            def on_spinner_change(spinner, text):
+                self.selected_data = coordinates_df[coordinates_df['都道府県'] == text].iloc[0]
 
-        # プルダウンメニューで選択した都道府県を変数に代入
-        selected_prefecture = self.spinner.text
-        print(f"選択された都道府県: {selected_prefecture}")
+            spinner.bind(text=on_spinner_change)
+            layout.add_widget(spinner)
 
-        opt_tihou = 0 # onoD_wth_cord.csvの行を格納する
+            # 日数を選択する Spinner を追加
+            days_spinner = Spinner(text='日数を選択', values=['1日', '3日'])
+            layout.add_widget(days_spinner)
 
-        if(selected_prefecture == "北海道"): 
-            opt_tihou = 0
-        elif(selected_prefecture == "東京"):
-            opt_tihou = 12
-        elif(selected_prefecture == "大阪"):
-            opt_tihou = 26
+            # BoxLayout を追加して横に並べる
+            horizontal_layout = BoxLayout(orientation='vertical')
+            layout.add_widget(horizontal_layout)
 
-           
- 
-        # onoD_wth_cord.csvファイルのパス
-        file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_wth_cord.csv'
+            def saveopt(tiikidata, daydata):
+            # CSVファイルからボタンの座標を取得するメソッド
+                filename = 'test\onoD\onoD_csv_list\onoD_opt.csv'
+                with open(filename, 'r') as csvfile:
+                    reader = csv.reader(csvfile)
+                    data = list(reader)
+                    
+                    data[3][1] = tiikidata
+                    data[4][1] = daydata
 
-        # CSVファイルを読み込む
-        with open(file_path, mode='r', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            data = list(reader)
-        # opt_tihouの値でonoD_wth_cord.csvを探す
-        for i in range(opt_tihou + 1):
-            if(i == opt_tihou ):
-                opt_weather_cord = data[opt_tihou][1]
-                print(opt_weather_cord)
+                # ここで CSV ファイルに書き込む
+                with open(filename, 'w', newline='') as csvfile:
+                    csv_writer = csv.writer(csvfile)
+                    csv_writer.writerows(data)
 
+            def re_setting(instance):
+                print(spinner)
+                return
 
-        # onoD_Opt.csvファイルのパス
-        file_path = r'C:\Users\204012\Desktop\test_git\test\onoD\onoD_Opt.csv'
+            update_button = Button(text="地域を保存", size_hint=(None, None))
+            update_button.bind(on_press=lambda instance: saveopt(tiikidata=self.selected_data, daydata=days_spinner.text))
+            layout.add_widget(update_button)
 
-        # CSVファイルを読み込む
-        with open(file_path, mode='r') as file:
-            reader = csv.reader(file)
-            data = list(reader)
-        
-        # 必要な部分を変更
-        data[2][1] = opt_weather_cord  # watchを文字列に変換して代入
-        data[3][1] = str(selected_prefecture)
-        
-        # 新しいCSVファイルとして書き出す
-        with open(file_path, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows(data)
+            re_button = Button(text="戻る", size_hint=(None, None))
+            re_button.bind(on_press=re_setting)
+            layout.add_widget(re_button)
+
+            return layout
+        else:
+            return Label(text="エラー: CSVファイルに 'latitude' と 'longitude' の列がありません。")
 
 if __name__ == '__main__':
-    DataDisplayApp().run()
+    WeatherApp().run()
