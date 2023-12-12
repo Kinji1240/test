@@ -16,7 +16,7 @@ class ClockApp(App):
         fcolar3 = float(fcolar3)
         fcolar4 = float(fcolar4)
         
-        self.font_path = 'GTfont\\'+ fontname + '.ttf'
+        self.font_path = fontname
         LabelBase.register(name=fontname, fn_regular=self.font_path)
 
         self.layout = BoxLayout(orientation='vertical')
@@ -28,6 +28,7 @@ class ClockApp(App):
             valign='middle',
             color=[fcolar1,fcolar2,fcolar3,fcolar4]  # 色を赤に指定
         )
+        
         self.layout.add_widget(self.time_label)
         Clock.schedule_interval(self.update_time, 1)
         return self.layout
@@ -47,11 +48,12 @@ class ClockApp(App):
             reader = csv.reader(csvfile)
             data = list(reader)
             
-            fname = data[0][0]
-            fcolar1 = data[0][1]
-            fcolar2 = data[0][2]
-            fcolar3 = data[0][3]
-            fcolar4 = data[0][4]
+            
+            fcolar1 = data[0][0]
+            fcolar2 = data[0][1]
+            fcolar3 = data[0][2]
+            fcolar4 = data[0][3]
+            fname = data[1][0]
             
 
 
