@@ -58,7 +58,6 @@ class TimeDisplayApp(App):
             data = list(reader)
         
         
-        
         # 必要な部分を変更
         data[5][1] = str(color)  # watchを文字列に変換して代入
         
