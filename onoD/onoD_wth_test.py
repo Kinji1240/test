@@ -2,15 +2,11 @@ import pandas as pd
 from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.spinner import Spinner
-from kivy.uix.button import Button
-from kivy.uix.popup import Popup
 from kivy.clock import Clock
-from kivy.core.window import Window
 import requests
-import japanize_kivy
-import csv
 from datetime import datetime
+import csv
+import japanize_kivy
 
 class WeatherApp(App):
     def get_weather_meaning(self, weather_code):
@@ -57,14 +53,14 @@ class WeatherApp(App):
             horizontal_layout = BoxLayout(orientation='horizontal')
             layout.add_widget(horizontal_layout)
 
-            def update_weather_data(dt):
+            def update_weather(dt):
                 # horizontal_layout のウィジェットをクリア
                 horizontal_layout.clear_widgets()
 
                 url = "https://api.open-meteo.com/v1/forecast"
 
                 if self.selected_data is None:
-                    user_latitude, user_longitude, selected_days  = self.loadopt()
+                    user_latitude, user_longitude, selected_days = self.loadopt()
 
                     params = {
                         "latitude": user_latitude,
@@ -74,18 +70,16 @@ class WeatherApp(App):
                         "timezone": "Asia/Tokyo"
                     }
 
-                    response = requests.get(url, params=params)\
+                    response = requests.get(url, params=params)
 
-
-                    
                     data = response.json()
                     hourly_data = data["hourly"]
                     daily_data = data["daily"]
 
                     # 日数に応じて表示するデータの範囲を調整
-                    if selected_days == 1:
+                    if selected_days == "1":
                         range_end = 1
-                    elif selected_days == 3:
+                    elif selected_days == "3":
                         range_end = 3
                     else:
                         range_end = 1  # デフォルトは1日
@@ -107,7 +101,7 @@ class WeatherApp(App):
                         min_temperature_label = Label(text=f"最低気温: {min_temperature} ℃")
                         weather_label = Label(text=f"天気: {weather_meaning}")
 
-                         # box を horizontal_layout に追加
+                        # box を horizontal_layout に追加
                         horizontal_layout.add_widget(box)
 
                         # box に各情報を追加
@@ -119,28 +113,24 @@ class WeatherApp(App):
                 else:
                     horizontal_layout.add_widget(Label(text=f"エラー: {response.status_code}"))
 
-            update_button = Button(text="天気を更新", size_hint=(None, None))
-            update_button.bind(on_press=update_weather_data)
-            layout.add_widget(update_button)
-
-            Clock.schedule_interval(update_weather_data, 10)
-        
-            
+            Clock.schedule_interval(update_weather, 10)
 
             return layout
         else:
             return Label(text="エラー: CSVファイルに 'latitude' と 'longitude' の列がありません。")
-    def loadopt(self):
-                # CSVファイルに緯度・経度・日数を保存するメソッド
-                filename = 'test/onoD/onoD_csv_list/onoD_opt.csv'
-                with open(filename, 'r') as csvfile:
-                    reader = csv.reader(csvfile)
-                    data = list(reader)
 
-                    idodata = data[3][1]
-                    keidodata = data[3][2]
-                    daydata = data[4][1]
-                
-                return idodata, keidodata, daydata
+    def loadopt(self):
+        # CSVファイルに緯度・経度・日数を保存するメソッド
+        filename = 'test/onoD/onoD_csv_list/onoD_opt.csv'
+        with open(filename, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            data = list(reader)
+
+            idodata = data[3][1]
+            keidodata = data[3][2]
+            daydata = data[4][1]
+
+        return idodata, keidodata, daydata
+
 if __name__ == '__main__':
     WeatherApp().run()
