@@ -1,18 +1,9 @@
-from PyQt6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsTextItem
-from PyQt6.QtCore import Qt, QTimer
+from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
 import datetime
 
-app = QApplication([])
-
-# Create QGraphicsView and QGraphicsScene
-view = QGraphicsView()
-scene = QGraphicsScene()
-view.setScene(scene)
-view.show()
-
-win = pg.GraphicsLayoutWidget()  # GraphicsLayoutWidget is from pyqtgraph
+win = pg.GraphicsLayoutWidget(show=True, title='Analog clock')
 init_window_size = 800
 win.resize(init_window_size, init_window_size)
 
@@ -38,7 +29,7 @@ for second in range(60):
     y1 = np.cos(np.radians(360 * (second / 60))) * radius
     y2 = np.cos(np.radians(360 * (second / 60))) * (radius - line_length)
     pen = pg.mkPen(width=line_width)
-    pen.setCapStyle(Qt.PenCapStyle.RoundCap)  # ここで修正
+    pen.setCapStyle(QtCore.Qt.RoundCap)
     graph.plot([x1, x2], [y1, y2], pen=pen)
 
 font_size = 64
@@ -50,7 +41,7 @@ for hour in range(1, 13, 1):
     y = np.cos(np.radians(360 * (hour / 12))) * radius * 0.8
     hour_text = pg.TextItem(text=str(hour), anchor=(0.5, 0.5))
     hour_text.setPos(x, y)
-    font = pg.QtGui.QFont()
+    font = QtGui.QFont()
     font.setPixelSize(font_size)
     hour_text.setFont(font)
     graph.addItem(hour_text)
@@ -60,7 +51,7 @@ dt_now = datetime.datetime.now()
 date_str = '{}/{}/{} {}'.format(dt_now.year, dt_now.month, dt_now.day, dt_now.strftime('%a'))
 date_text = pg.TextItem(text=date_str, anchor=(0.5, 0.5))
 date_text.setPos(0, -radius / 3.5)
-font = pg.QtGui.QFont()
+font = QtGui.QFont()
 font.setPixelSize(int(font_size / 2))
 date_text.setFont(font)
 graph.addItem(date_text)
@@ -70,16 +61,17 @@ time_text.setPos(0, -radius / 2.5)
 time_text.setFont(font)
 graph.addItem(time_text)
 
+
 pen = pg.mkPen(width=12)
-pen.setCapStyle(Qt.PenCapStyle.RoundCap)  # ここで修正
+pen.setCapStyle(QtCore.Qt.RoundCap)
 hour_hand_plot = graph.plot(pen=pen)
 
 pen = pg.mkPen(width=6)
-pen.setCapStyle(Qt.PenCapStyle.RoundCap)  # ここで修正
+pen.setCapStyle(QtCore.Qt.RoundCap)
 minute_hand_plot = graph.plot(pen=pen)
 
 pen = pg.mkPen(width=2)
-pen.setCapStyle(Qt.PenCapStyle.RoundCap)  # ここで修正
+pen.setCapStyle(QtCore.Qt.RoundCap)
 second_hand_plot = graph.plot(pen=pen)
 
 
@@ -112,20 +104,20 @@ def resize_text():
     size = win.size()
     height = size.height()
     width = size.width()
-    new_font_size = int(font_size * (min(height, width) / init_window_size))
+    new_font_size = font_size * (min(height, width) / init_window_size)
 
-    font = pg.QtGui.QFont()
+    font = QtGui.QFont()
     font.setPixelSize(int(new_font_size / 2))
     date_text.setFont(font)
     time_text.setFont(font)
 
     for hour_text in hour_texts:
-        font = pg.QtGui.QFont()
+        font = QtGui.QFont()
         font.setPixelSize(new_font_size)
         hour_text.setFont(font)
 
 
-resize_timer = QTimer()
+resize_timer = QtCore.QTimer()
 resize_timer.timeout.connect(resize_text)
 resize_timer.start(200)
 
@@ -139,12 +131,13 @@ def update_clock():
     set_time(h, m, s)
 
 
-update_timer = QTimer()
+update_timer = QtCore.QTimer()
 update_timer.timeout.connect(update_clock)
 update_timer.start(50)
 
 if __name__ == '__main__':
     import sys
 
-    if (sys.flags.interactive != 1) or not hasattr(QTimer, 'PYQT_VERSION'):
-        QApplication.instance().exec()
+    app = QtGui.QApplication([])
+    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        QtGui.QApplication.instance().exec_()
