@@ -1,0 +1,39 @@
+<AnalogClock>:
+    Label:
+        text: '12'
+        size_hint_y: None
+        height: 30
+
+    BoxLayout:
+        size_hint_y: None
+        height: 400
+
+        Label:
+            text: '9'
+            size_hint_x: None
+            width: 30
+
+        Label:
+            text: root.hour_hand.text
+            font_size: 24
+            pos: root.hour_hand.pos
+
+        Label:
+            text: root.min_hand.text
+            font_size: 18
+            pos: root.min_hand.pos
+
+        Label:
+            text: root.sec_hand.text
+            font_size: 12
+            pos: root.sec_hand.pos
+
+        Label:
+            text: '3'
+            size_hint_x: None
+            width: 30
+
+    Label:
+        text: '6'
+        size_hint_y: None
+        height: 30
