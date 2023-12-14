@@ -65,15 +65,8 @@ class BackgroundChangerApp(App):
         background_color = self.background_color_picker.color
         text_color = self.text_color_picker.color
 
-        # csvファイルの保存先ディレクトリ
-        csv_dir = 'MAINSYS/CSV'
-
-        # ディレクトリが存在しない場合、作成
-        if not os.path.exists(csv_dir):
-            os.makedirs(csv_dir)
-
         # csvファイルの保存パス
-        csv_path = os.path.join(csv_dir, 'color_settings.csv')
+        csv_path = "testplay\CSV\onoD_opt.csv"
 
         self.save_colors_to_csv(csv_path, background_color, text_color)
 
@@ -82,18 +75,21 @@ class BackgroundChangerApp(App):
         pass
 
     def save_colors_to_csv(self, csv_file, background_color, text_color):
+            
+
+        with open(csv_file, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            data = list(reader)
+
+            data[7][1] = background_color
+            print(background_color + text_color)
+            data[8][1] = text_color
+
+        # ここで CSV ファイルに書き込む
         with open(csv_file, 'w', newline='') as csvfile:
-            fieldnames = ['BackgroundRed', 'BackgroundGreen', 'BackgroundBlue', 'TextRed', 'TextGreen', 'TextBlue']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerow({
-                'BackgroundRed': background_color[0],
-                'BackgroundGreen': background_color[1],
-                'BackgroundBlue': background_color[2],
-                'TextRed': text_color[0],
-                'TextGreen': text_color[1],
-                'TextBlue': text_color[2]
-            })
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerows(data)
+        print("保存されました！")
 
 if __name__ == '__main__':
     BackgroundChangerApp().run()
