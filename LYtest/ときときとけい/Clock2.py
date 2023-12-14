@@ -13,6 +13,12 @@ class AnalogClock(Widget):
     def __init__(self, **kwargs):
         super(AnalogClock, self).__init__(**kwargs)
 
+        # ウィジェットのサイズを10%縮小
+        self.size_hint = (0.9, 0.9)
+
+        # ウィジェットを画面中央に配置
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+
         self.center_x = self.width / 2
         self.center_y = self.height / 2
 
@@ -24,6 +30,9 @@ class AnalogClock(Widget):
     def update(self, dt):
         self.canvas.clear()
         now = self.get_current_time()
+
+        # 文字盤の描画
+        self.draw_clock_face()
 
         # 時針
         hour_angle = (now.hour % 12 + now.minute / 60.0) * 30
@@ -46,9 +55,6 @@ class AnalogClock(Widget):
         second_y = self.center_y + second_length * self.cos_deg(second_angle)
         self.draw_hand(self.center_x, self.center_y, second_x, second_y, Color(0, 0, 1))  # 青色
 
-        # 文字盤の描画
-        self.draw_clock_face()
-
     def draw_clock_face(self):
         clock_face = InstructionGroup()
 
@@ -61,10 +67,6 @@ class AnalogClock(Widget):
             angle = math.radians(-hour * 30 + 60)  # 12時から時計回りに30度ずつ
             text_x = self.center_x + self.width * 0.45 * math.sin(angle)
             text_y = self.center_y + self.width * 0.45 * math.cos(angle)
-
-            # 青色で線を描く
-            clock_face.add(Color(0, 0, 1))  # 青色
-            clock_face.add(Line(points=[self.center_x, self.center_y, text_x, text_y], width=2))
 
             # 青色で円を描く
             clock_face.add(Color(0, 0, 1))  # 青色
