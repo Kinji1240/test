@@ -7,6 +7,19 @@ import requests
 from datetime import datetime
 import csv
 import japanize_kivy
+from kivy.core.window import Window
+
+## インチあたりのピクセル数
+pixels_per_inch = 96
+
+# 縦8cm、横15cmのサイズをピクセルに変換
+width_cm = 15
+height_cm = 8
+width_pixels = int(width_cm * pixels_per_inch / 2.54)
+height_pixels = int(height_cm * pixels_per_inch / 2.54)
+
+# ウィンドウサイズの指定
+Window.size = (width_pixels, height_pixels)
 
 class WeatherApp(App):
     def get_weather_meaning(self, weather_code):
@@ -43,8 +56,11 @@ class WeatherApp(App):
         return formatted_date
 
     def build(self):
+        
+        fsize = "18"
+
         layout = BoxLayout(orientation='vertical')
-        coordinates_df = pd.read_csv('test/LYtest/47都道府県IDOKEIDO-UTF8.csv')
+        coordinates_df = pd.read_csv('test\onoD\onoD_csv_list\IDOKEIDO-UTF8.csv')
 
         if 'latitude' in coordinates_df.columns and 'longitude' in coordinates_df.columns:
             self.selected_data = None
@@ -85,7 +101,7 @@ class WeatherApp(App):
                         range_end = 1  # デフォルトは1日
 
                     for i in range(range_end):
-                        date = hourly_data["time"][i]
+                        date = hourly_data["time"][i*24]
                         formatted_date = self.format_date(date)
                         temperature = hourly_data["temperature_2m"][i]
                         max_temperature = daily_data["temperature_2m_max"][i]
@@ -93,27 +109,45 @@ class WeatherApp(App):
                         weather_code = daily_data["weather_code"][i]
                         weather_meaning = self.get_weather_meaning(weather_code)
 
+                        string_to_remove = "2023-"
+                        formatted_date = formatted_date.replace(string_to_remove, "")
+                        string_to_remove = "00:00"
+                        formatted_date = formatted_date.replace(string_to_remove, "")
+                        string_to_remove = "-"
+                        formatted_date = formatted_date.replace(string_to_remove, "/")
+
                         # 横に並べて表示するために BoxLayout を使用
                         box = BoxLayout(orientation='vertical')
-                        date_label = Label(text=f"日付: {formatted_date}")
-                        temperature_label = Label(text=f"現在の気温: {temperature} ℃")
-                        max_temperature_label = Label(text=f"最高気温: {max_temperature} ℃")
-                        min_temperature_label = Label(text=f"最低気温: {min_temperature} ℃")
-                        weather_label = Label(text=f"天気: {weather_meaning}")
+                        if i == 0:
+                            day = "今日"
+                        elif i == 1:
+                            day = "明日"
+                        elif i == 2:
+                            day = "明後日"
+                        else: day = "" 
+
+                        weather_label = Label(text=day+
+                                            f" {formatted_date}\n" 
+                                           +f"\n現在の気温: {temperature} ℃\n"
+                                           +f"最高気温: {max_temperature} ℃\n"
+                                           +f"最低気温: {min_temperature} ℃\n"
+                                           +f"天気: {weather_meaning}"
+                                           ,font_size=fsize+'sp')
+                        
 
                         # box を horizontal_layout に追加
                         horizontal_layout.add_widget(box)
 
                         # box に各情報を追加
-                        box.add_widget(date_label)
-                        box.add_widget(temperature_label)
-                        box.add_widget(max_temperature_label)
-                        box.add_widget(min_temperature_label)
+
                         box.add_widget(weather_label)
+                        
+
                 else:
                     horizontal_layout.add_widget(Label(text=f"エラー: {response.status_code}"))
 
-            Clock.schedule_interval(update_weather, 10)
+            update_weather(dt = 10)
+            Clock.schedule_interval(update_weather, 1800)
 
             return layout
         else:
@@ -121,7 +155,7 @@ class WeatherApp(App):
 
     def loadopt(self):
         # CSVファイルに緯度・経度・日数を保存するメソッド
-        filename = 'test/onoD/onoD_csv_list/onoD_opt.csv'
+        filename = 'test\onoD\onoD_csv_list\onoD_opt.csv'
         with open(filename, 'r') as csvfile:
             reader = csv.reader(csvfile)
             data = list(reader)

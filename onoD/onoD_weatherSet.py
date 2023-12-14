@@ -5,11 +5,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
-from kivy.clock import Clock
 from kivy.core.window import Window
 import csv
-import requests
 import japanize_kivy
+import os
 from datetime import datetime
 
 class WeatherApp(App):
@@ -18,34 +17,40 @@ class WeatherApp(App):
         layout = BoxLayout(orientation='vertical')
         coordinates_df = pd.read_csv('test/LYtest/47都道府県IDOKEIDO-UTF8.csv')
 
+        # coordinates_df（pd.read_csvで読み込んだデータフレーム）の列に 'latitude' と 'longitude' が存在するかを確認
         if 'latitude' in coordinates_df.columns and 'longitude' in coordinates_df.columns:
-            self.selected_data = None
-            spinner_values = coordinates_df['都道府県'].tolist()
-            spinner = Spinner(text='都道府県を選択', values=spinner_values)
-            
+            self.selected_data = None 
+            self.user_latitude = None # 緯度
+            self.user_longitude = None # 経度
+            self.selected_days = None # 選択した日数
 
+            # プルダウンメニューで都道府県を選択する
+            spinner_values = coordinates_df['都道府県'].tolist() 
+            spinner = Spinner(text='都道府県を選択', values=spinner_values)
+
+            # 選択した都道府県の緯度経度を変数に代入
             def on_spinner_change(spinner, text):
                 self.selected_data = coordinates_df[coordinates_df['都道府県'] == text].iloc[0]
+                self.user_latitude = self.selected_data['latitude']
+                self.user_longitude = self.selected_data['longitude']
 
             spinner.bind(text=on_spinner_change)
             layout.add_widget(spinner)
 
             # 日数を選択する Spinner を追加
-            days_spinner = Spinner(text='日数を選択', values=['1日', '3日'])
+            days_spinner = Spinner(text='日数を選択', values=['1', '3'])
+            days_spinner.bind(text=self.on_days_spinner_change) # on_days_spinner_changeは76行あたり
             layout.add_widget(days_spinner)
 
-            # BoxLayout を追加して横に並べる
-            horizontal_layout = BoxLayout(orientation='vertical')
-            layout.add_widget(horizontal_layout)
-
-            def saveopt(tiikidata, daydata):
-            # CSVファイルからボタンの座標を取得するメソッド
-                filename = 'test\onoD\onoD_csv_list\onoD_opt.csv'
+            def saveopt(idodata, keidodata, daydata):
+                # CSVファイルに緯度・経度・日数を保存するメソッド
+                filename = 'test/onoD/onoD_csv_list/onoD_opt.csv'
                 with open(filename, 'r') as csvfile:
                     reader = csv.reader(csvfile)
                     data = list(reader)
-                    
-                    data[3][1] = tiikidata
+
+                    data[3][1] = idodata
+                    data[3][2] = keidodata
                     data[4][1] = daydata
 
                 # ここで CSV ファイルに書き込む
@@ -54,11 +59,11 @@ class WeatherApp(App):
                     csv_writer.writerows(data)
 
             def re_setting(instance):
-                print(spinner)
+                os.system("Python ") # 設定画面に遷移
                 return
 
             update_button = Button(text="地域を保存", size_hint=(None, None))
-            update_button.bind(on_press=lambda instance: saveopt(tiikidata=self.selected_data, daydata=days_spinner.text))
+            update_button.bind(on_press=lambda instance: saveopt(idodata=self.user_latitude, keidodata=self.user_longitude, daydata=self.selected_days))
             layout.add_widget(update_button)
 
             re_button = Button(text="戻る", size_hint=(None, None))
@@ -68,6 +73,9 @@ class WeatherApp(App):
             return layout
         else:
             return Label(text="エラー: CSVファイルに 'latitude' と 'longitude' の列がありません。")
+    
+    def on_days_spinner_change(self, spinner, text):
+        self.selected_days = int(text) # 選択した日数を数値としてselected_days変数に代入
 
 if __name__ == '__main__':
     WeatherApp().run()
